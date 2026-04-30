@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Eurovision 2026 Qualifier Predictions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{
+  width:100%;height:100%;
+  background:#0d001f;
+  font-family:'Montserrat',sans-serif;
+  overflow:hidden;
+}
+.app{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  background:radial-gradient(ellipse 120% 70% at 50% 0%,#3a00a0 0%,#1a0050 45%,#0d001f 100%);
+  position:relative;overflow:hidden;
+}
+/* ── NAVIGATION / TRANSITIONS ── */
+.screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  width:100%;height:100%;
+  background:radial-gradient(ellipse 120% 70% at 50% 0%,#3a00a0 0%,#1a0050 45%,#0d001f 100%);
+  will-change:transform,opacity;
+  transform:translateX(100%);
+  transition:transform 0.44s cubic-bezier(0.4,0,0.2,1),
+             opacity   0.44s cubic-bezier(0.4,0,0.2,1);
+  opacity:0;
+  pointer-events:none;
+}
+.screen.active{
+  transform:translateX(0);
+  opacity:1;
+  pointer-events:auto;
+}
+.screen.slide-out{
+  transform:translateX(-24%);
+  opacity:0;
+  pointer-events:none;
+}
+
+/* ── MENU ── */
+.menu-screen{
+  align-items:center;
+  justify-content:flex-start;
+  overflow-y:auto;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0) 0;
+}
+#menuScreen{
+  align-items:center;
+  justify-content:flex-start;
+  overflow-y:auto;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0) 0;
+}
+.menu-inner{
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;max-width:400px;
+  padding:28px 20px 28px;
+  gap:0;
+}
+.logo-stack{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:18px;}
+.evf-logo{height:44px;width:auto;max-width:190px;object-fit:contain;}
+.esc-logo{height:50px;width:auto;max-width:130px;object-fit:contain;}
+.menu-title-block{text-align:center;margin-bottom:22px;}
+.menu-title{color:#fff;font-size:clamp(15px,4.5vw,22px);font-weight:900;letter-spacing:2px;text-transform:uppercase;line-height:1.2;}
+.menu-sub{color:rgba(255,255,255,0.5);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-top:5px;}
+
+.menu-btns{display:flex;flex-direction:column;gap:12px;width:100%;margin-bottom:20px;}
+.menu-btn{
+  padding:15px 22px;border-radius:50px;border:none;cursor:pointer;
+  font-family:inherit;font-weight:800;font-size:13px;letter-spacing:1.5px;
+  text-transform:uppercase;
+  transition:opacity 0.2s ease;
+  display:flex;align-items:center;justify-content:space-between;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.menu-btn:active{opacity:0.72;}
+.menu-btn-1{background:linear-gradient(90deg,#ff03ff,#8800ff);color:#fff;}
+.menu-btn-2{background:linear-gradient(90deg,#8800ff,#ff03ff);color:#fff;}
+.menu-btn-num{background:rgba(255,255,255,0.22);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+
+.countdowns-wrap{display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:22px;}
+.cd-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 16px;}
+.cd-label{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.cd-label-1{color:#ff03ff;}
+.cd-label-2{color:#a855f7;}
+.cd-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;animation:pulse 1.4s ease-in-out infinite;}
+.cd-dot-1{background:#ff03ff;}
+.cd-dot-2{background:#a855f7;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.cd-date{font-size:10px;font-weight:600;color:rgba(255,255,255,0.45);margin-bottom:8px;letter-spacing:0.3px;}
+.cd-units{display:flex;gap:6px;align-items:center;}
+.cd-unit{text-align:center;flex:1;}
+.cd-num{font-size:clamp(20px,5vw,28px);font-weight:900;color:#fff;line-height:1;letter-spacing:-1px;background:rgba(255,255,255,0.07);border-radius:8px;padding:6px 4px;display:block;}
+.cd-unit-label{font-size:8px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;margin-top:4px;}
+.cd-sep{font-size:20px;font-weight:900;color:rgba(255,255,255,0.3);margin-bottom:14px;flex-shrink:0;}
+.cd-live{font-size:12px;font-weight:800;color:#ff03ff;letter-spacing:1px;text-transform:uppercase;text-align:center;padding:8px;background:rgba(255,3,255,0.1);border-radius:8px;animation:pulse 1s ease-in-out infinite;}
+.cd-done{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);text-align:center;padding:6px;letter-spacing:0.5px;}
+
+.stay-updated{color:rgba(255,255,255,0.4);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-align:center;line-height:1.8;border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;width:100%;}
+.stay-updated a{color:#ff03ff;text-decoration:none;font-weight:800;}
+
+/* ── HOW IT WORKS ── */
+.how-it-works{
+  width:100%;margin-bottom:20px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.09);
+  border-radius:16px;
+  padding:14px 16px;
+}
+.how-title{
+  font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);margin-bottom:12px;
+}
+.how-steps{display:flex;flex-direction:column;gap:10px;}
+.how-step{display:flex;align-items:center;gap:12px;}
+.how-icon{
+  width:24px;height:24px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#ff03ff,#8800ff);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:900;color:#fff;
+}
+.how-text{
+  font-size:12px;font-weight:600;color:rgba(255,255,255,0.72);
+  letter-spacing:0.1px;line-height:1.35;
+}
+
+/* ── PICKER ── */
+.picker-screen{overflow:hidden;}
+.picker-top{padding:13px 14px 11px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;}
+.back-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:50%;width:34px;height:34px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;}
+.picker-header{flex:1;}
+.picker-header h2{color:#fff;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
+.picker-header p{color:rgba(255,255,255,0.4);font-size:10px;font-weight:600;letter-spacing:0.3px;margin-top:2px;}
+.evf-top{height:20px;width:auto;object-fit:contain;}
+.counter-strip{padding:8px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.counter-label{color:rgba(255,255,255,0.45);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.counter-pill{background:rgba(255,3,255,0.25);border:1.5px solid #ff03ff;border-radius:20px;padding:2px 12px;font-size:12px;font-weight:800;color:#fff;}
+.countries-list{padding:0 10px;overflow-y:auto;flex:1;}
+.country-row{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:10px;cursor:pointer;border:1.5px solid transparent;background:rgba(255,255,255,0.04);margin-bottom:4px;
+  transition:background 0.22s ease,border-color 0.22s ease,opacity 0.18s ease;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+.country-row:active{opacity:0.72;}
+.country-row.sel{background:rgba(255,3,255,0.15);border-color:#ff03ff;}
+.flag-box{width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);}
+.flag-box img{width:100%;height:100%;object-fit:cover;}
+.cinfo{flex:1;min-width:0;}
+.cname{display:block;color:#fff;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cartist{display:block;color:rgba(255,255,255,0.5);font-size:10px;font-weight:600;letter-spacing:0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.check-circle{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.12s,border-color 0.12s;}
+.country-row.sel .check-circle{background:#ff03ff;border-color:#ff03ff;}
+.check-icon{width:9px;height:9px;opacity:0;transition:opacity 0.12s;}
+.country-row.sel .check-icon{opacity:1;}
+.bottom-actions{padding:11px 13px;display:flex;flex-direction:column;gap:7px;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;padding-bottom:max(11px,env(safe-area-inset-bottom,11px));}
+.save-btn{padding:13px;border-radius:40px;border:none;background:linear-gradient(90deg,#ff03ff,#6c00ff);color:#fff;font-family:inherit;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s ease;-webkit-tap-highlight-color:transparent;user-select:none;}
+.save-btn:active{opacity:0.75;}
+.save-hint{text-align:center;color:rgba(255,255,255,0.3);font-size:10px;font-weight:600;letter-spacing:0.3px;}
+.toast-bar{background:#ff03ff;color:#fff;text-align:center;padding:7px;font-size:11px;font-weight:800;letter-spacing:0.3px;opacity:0;transition:opacity 0.3s;border-radius:8px;margin:0 0 4px;flex-shrink:0;}
+.toast-bar.show{opacity:1;}
+
+/* ── SAVE MODAL ── */
+.save-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px;}
+.save-modal-overlay.open{display:flex;}
+.save-modal-img{max-width:min(300px,80vw);max-height:55vh;border-radius:12px;object-fit:contain;box-shadow:0 0 40px rgba(255,3,255,0.4);}
+.save-modal-hint{color:#fff;font-size:13px;font-weight:700;letter-spacing:0.3px;text-align:center;background:rgba(255,3,255,0.15);border:1px solid rgba(255,3,255,0.4);border-radius:10px;padding:10px 18px;max-width:280px;}
+.save-modal-close{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:50px;color:#fff;font-family:inherit;font-weight:800;font-size:12px;letter-spacing:1px;padding:10px 28px;cursor:pointer;text-transform:uppercase;}
+
+@media(min-width:600px){
+  .cd-num{font-size:30px;}
+  .menu-btn{font-size:14px;padding:17px 26px;}
+  .cname{font-size:13px;}
+  .cartist{font-size:11px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- MENU SCREEN -->
+  <div class="screen active" id="menuScreen" style="transform:translateX(0);opacity:1;pointer-events:auto;">
+    <div class="menu-inner">
+      <div class="logo-stack">
+        <img src="https://i.imgur.com/aGci65i.png" class="evf-logo" alt="EurovisionFun" onerror="this.style.visibility='hidden'">
+        <img src="https://i.imgur.com/I0l4jby.png" class="esc-logo" alt="Eurovision Song Contest Vienna 2026" onerror="this.style.visibility='hidden'">
+      </div>
+      <div class="menu-title-block">
+        <div class="menu-title">Qualifier Predictions</div>
+        <div class="menu-sub">Which countries will qualify?</div>
+      </div>
+
+      <div class="how-it-works">
+        <div class="how-title">How it works</div>
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="how-icon">1</div>
+            <div class="how-text">Choose a Semi-Final below</div>
+          </div>
+          <div class="how-step">
+            <div class="how-icon">2</div>
+            <div class="how-text">Tap up to 10 countries you think will qualify</div>
+          </div>
+          <div class="how-step">
+            <div class="how-icon">3</div>
+            <div class="how-text">Save your predictions as a story image &amp; share!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-btns">
+        <div class="cd-card" style="margin-bottom:10px;">
+          <div class="cd-label cd-label-1"><span class="cd-dot cd-dot-1"></span>1st Semi-Final</div>
+          <div class="cd-date">Tuesday 13 May 2026 · 22:00 Athens time</div>
+          <div id="cd1-wrap"></div>
+        </div>
+        <button class="menu-btn menu-btn-1" onclick="openSemi(1)">
+          <span>1st Semi-Final</span><span class="menu-btn-num">1</span>
+        </button>
+
+        <div class="cd-card" style="margin-top:10px;margin-bottom:10px;">
+          <div class="cd-label cd-label-2"><span class="cd-dot cd-dot-2"></span>2nd Semi-Final</div>
+          <div class="cd-date">Thursday 14 May 2026 · 22:00 Athens time</div>
+          <div id="cd2-wrap"></div>
+        </div>
+        <button class="menu-btn menu-btn-2" onclick="openSemi(2)">
+          <span>2nd Semi-Final</span><span class="menu-btn-num">2</span>
+        </button>
+      </div>
+
+      <div class="stay-updated">
+        Stay updated &amp; share your predictions<br>
+        <a href="https://eurovisionfun.com" target="_blank">eurovisionfun.com</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PICKER SCREEN -->
+  <div class="screen picker-screen" id="pickerScreen">
+    <div class="picker-top">
+      <button class="back-btn" onclick="goBack()">&#8592;</button>
+      <div class="picker-header">
+        <h2 id="pickerTitle">1st Semi-Final</h2>
+        <p id="pickerSub">Tap to select your qualifiers</p>
+      </div>
+      <img src="https://i.imgur.com/aGci65i.png" class="evf-top" alt="EurovisionFun" onerror="this.style.visibility='hidden'">
+    </div>
+    <div class="counter-strip">
+      <span class="counter-label">Selected</span>
+      <span class="counter-pill"><span id="selCount">0</span> / 10</span>
+    </div>
+    <div class="countries-list" id="countriesList"></div>
+    <div class="bottom-actions">
+      <div class="toast-bar" id="toastBar"></div>
+      <button class="save-btn" onclick="generateCard()">&#128247; Save &amp; Share My Predictions</button>
+      <div class="save-hint">Story-ready image for Instagram, X &amp; Facebook</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Save modal for in-app browsers -->
+<div class="save-modal-overlay" id="saveModal">
+  <div class="save-modal-hint">📲 Long-press the image below &amp; tap "Save to Photos"</div>
+  <img id="saveModalImg" class="save-modal-img" src="" alt="Your predictions">
+  <button class="save-modal-close" onclick="document.getElementById('saveModal').classList.remove('open')">✕ Close</button>
+</div>
+
+<canvas id="exportCanvas" style="display:none;position:fixed;left:-9999px;top:-9999px;"></canvas>
+
+<script>
+const SF1_TIME = new Date('2026-05-12T21:00:00+02:00');
+const SF2_TIME = new Date('2026-05-14T21:00:00+02:00');
+
+const SEMI1=[
+  {name:'Moldova',  cc:'md',artist:'Satoshi',             song:'Viva, Moldova!'},
+  {name:'Sweden',   cc:'se',artist:'FELICIA',             song:'My System'},
+  {name:'Croatia',  cc:'hr',artist:'LELEK',               song:'Andromeda'},
+  {name:'Greece',   cc:'gr',artist:'Akylas',              song:'Ferto'},
+  {name:'Portugal', cc:'pt',artist:'Bandidos do Cante',   song:'Rosa'},
+  {name:'Georgia',  cc:'ge',artist:'Bzikebi',             song:'On Replay'},
+  {name:'Finland',  cc:'fi',artist:'Linda Lampenius x Pete Parkkonen',song:'Liekinheitin'},
+  {name:'Montenegro',cc:'me',artist:'Tamara Živković',    song:'Nova Zora'},
+  {name:'Estonia',  cc:'ee',artist:'Vanilla Ninja',       song:'Too Epic To Be True'},
+  {name:'Israel',   cc:'il',artist:'Noam Bettan',         song:'Michelle'},
+  {name:'Belgium',  cc:'be',artist:'ESSYLA',              song:'Dancing on the Ice'},
+  {name:'Lithuania',cc:'lt',artist:'Lion Ceccah',         song:'Sólo Quiero Más'},
+  {name:'San Marino',cc:'sm',artist:'SENHIT',             song:'Superstar'},
+  {name:'Poland',   cc:'pl',artist:'ALICJA',              song:'Pray'},
+  {name:'Serbia',   cc:'rs',artist:'LAVINA',              song:'Kraj Mene'}
+];
+const SEMI2=[
+  {name:'Bulgaria', cc:'bg',artist:'DARA',                song:'Bangaranga'},
+  {name:'Azerbaijan',cc:'az',artist:'JIVA',               song:'Just Go'},
+  {name:'Romania',  cc:'ro',artist:'Alexandra Căpitănescu',song:'Choke Me'},
+  {name:'Luxembourg',cc:'lu',artist:'Eva Marija',         song:'Mother Nature'},
+  {name:'Czechia',  cc:'cz',artist:'Daniel Zizka',        song:'CROSSROADS'},
+  {name:'Armenia',  cc:'am',artist:'SIMÓN',               song:'Paloma Rumba'},
+  {name:'Switzerland',cc:'ch',artist:'Veronica Fusaro',   song:'Alice'},
+  {name:'Cyprus',   cc:'cy',artist:'Antigoni',            song:'JALLA'},
+  {name:'Austria',  cc:'at',artist:'COSMÓ',               song:'Tanzschein'},
+  {name:'Latvia',   cc:'lv',artist:'Atvara',              song:'Ēnā'},
+  {name:'Denmark',  cc:'dk',artist:'Søren Torpegaard Lund',song:'Før Vi Går Hjem'},
+  {name:'Australia',cc:'au',artist:'Delta Goodrem',       song:'Eclipse'},
+  {name:'Ukraine',  cc:'ua',artist:'LELÉKA',              song:'Ridnym'},
+  {name:'Albania',  cc:'al',artist:'Alis',                song:'Nân'},
+  {name:'Malta',    cc:'mt',artist:'AIDAN',               song:'Bella'},
+  {name:'Norway',   cc:'no',artist:'JONAS LOVV',          song:'YA YA YA'}
+];
+
+let currentSemi=1, selected=new Set();
+
+function pad(n){return String(n).padStart(2,'0');}
+
+function renderCountdown(targetDate,wrapId){
+  const wrap=document.getElementById(wrapId);if(!wrap)return;
+  const diff=targetDate-new Date();
+  if(diff<=0&&diff>-7200000){wrap.innerHTML='<div class="cd-live">LIVE NOW!</div>';return;}
+  if(diff<=-7200000){wrap.innerHTML='<div class="cd-done">Semi-Final has ended</div>';return;}
+  const s=Math.floor(diff/1000);
+  const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),sc=s%60;
+  wrap.innerHTML=`<div class="cd-units">
+    <div class="cd-unit"><span class="cd-num" id="${wrapId}-d">${pad(d)}</span><div class="cd-unit-label">Days</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span class="cd-num" id="${wrapId}-h">${pad(h)}</span><div class="cd-unit-label">Hours</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span class="cd-num" id="${wrapId}-m">${pad(m)}</span><div class="cd-unit-label">Mins</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span class="cd-num" id="${wrapId}-s">${pad(sc)}</span><div class="cd-unit-label">Secs</div></div>
+  </div>`;
+}
+function tickCountdown(targetDate,wrapId){
+  const wrap=document.getElementById(wrapId);if(!wrap)return;
+  const diff=targetDate-new Date();
+  if(diff<=0&&diff>-7200000){wrap.innerHTML='<div class="cd-live">LIVE NOW!</div>';return;}
+  if(diff<=-7200000){wrap.innerHTML='<div class="cd-done">Semi-Final has ended</div>';return;}
+  const s=Math.floor(diff/1000);
+  const d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),sc=s%60;
+  const dEl=document.getElementById(wrapId+'-d');
+  const hEl=document.getElementById(wrapId+'-h');
+  const mEl=document.getElementById(wrapId+'-m');
+  const sEl=document.getElementById(wrapId+'-s');
+  if(dEl)dEl.textContent=pad(d);if(hEl)hEl.textContent=pad(h);
+  if(mEl)mEl.textContent=pad(m);if(sEl)sEl.textContent=pad(sc);
+}
+renderCountdown(SF1_TIME,'cd1-wrap');
+renderCountdown(SF2_TIME,'cd2-wrap');
+setInterval(()=>{tickCountdown(SF1_TIME,'cd1-wrap');tickCountdown(SF2_TIME,'cd2-wrap');},1000);
+
+function flagUrl(cc){return'https://flagcdn.com/w80/'+cc+'.png';}
+
+function openSemi(n){
+  currentSemi=n;selected=new Set();
+  const menu=document.getElementById('menuScreen');
+  const picker=document.getElementById('pickerScreen');
+  document.getElementById('pickerTitle').textContent=(n===1?'1st':'2nd')+' Semi-Final';
+  buildList(n===1?SEMI1:SEMI2);
+
+  // Slide menu out to the left, slide picker in from right
+  menu.classList.add('slide-out');
+  menu.classList.remove('active');
+  // Small rAF delay so browser registers the starting transform before transitioning
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      picker.classList.add('active');
+    });
+  });
+}
+function goBack(){
+  const menu=document.getElementById('menuScreen');
+  const picker=document.getElementById('pickerScreen');
+  picker.classList.remove('active');
+  menu.classList.remove('slide-out');
+  menu.classList.add('active');
+}
+function buildList(countries){
+  selected.clear();updateCount();
+  const list=document.getElementById('countriesList');
+  list.innerHTML='';
+  countries.forEach((c,i)=>{
+    const row=document.createElement('div');
+    row.className='country-row';row.id='row_'+i;
+    row.innerHTML=`
+      <div class="flag-box"><img src="${flagUrl(c.cc)}" alt="${c.name}" onerror="this.parentNode.style.background='rgba(255,3,255,0.2)'"></div>
+      <div class="cinfo">
+        <span class="cname">${c.name}</span>
+        <span class="cartist">${c.artist} · ${c.song}</span>
+      </div>
+      <div class="check-circle"><svg class="check-icon" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+    row.addEventListener('click',()=>toggle(i,row));
+    list.appendChild(row);
+  });
+}
+function toggle(i,row){
+  if(selected.has(i)){selected.delete(i);row.classList.remove('sel');}
+  else{
+    if(selected.size>=10){showToast('Maximum 10 countries!');return;}
+    selected.add(i);row.classList.add('sel');
+  }
+  updateCount();
+}
+function updateCount(){document.getElementById('selCount').textContent=selected.size;}
+function showToast(msg){
+  const t=document.getElementById('toastBar');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+/* ── CANVAS DRAW ── */
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+
+function truncateText(ctx,text,maxW){
+  if(ctx.measureText(text).width<=maxW)return text;
+  while(text.length>0&&ctx.measureText(text+'…').width>maxW)text=text.slice(0,-1);
+  return text+'…';
+}
+
+function generateCard(){
+  if(selected.size===0){showToast('Select at least one country!');return;}
+  showToast('Creating image…');
+  const countries=currentSemi===1?SEMI1:SEMI2;
+  const chosen=Array.from(selected).sort((a,b)=>a-b).map(i=>countries[i]);
+  const W=1080,H=1920;
+  const canvas=document.getElementById('exportCanvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  // Background
+  const grd=ctx.createLinearGradient(0,0,0,H);
+  grd.addColorStop(0,'#1a0050');grd.addColorStop(0.45,'#2d006b');grd.addColorStop(1,'#0d001f');
+  ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+  const rg1=ctx.createRadialGradient(W*.75,H*.06,0,W*.75,H*.06,600);
+  rg1.addColorStop(0,'rgba(255,3,255,0.15)');rg1.addColorStop(1,'transparent');
+  ctx.fillStyle=rg1;ctx.fillRect(0,0,W,H);
+  const rg2=ctx.createRadialGradient(W*.25,H*.92,0,W*.25,H*.92,700);
+  rg2.addColorStop(0,'rgba(108,0,255,0.15)');rg2.addColorStop(1,'transparent');
+  ctx.fillStyle=rg2;ctx.fillRect(0,0,W,H);
+
+  const evfImg=new Image(),escImg=new Image();
+  evfImg.crossOrigin='anonymous';escImg.crossOrigin='anonymous';
+  let done=0;
+  const tryDraw=()=>{if(++done<2)return;drawFull(ctx,W,H,evfImg,escImg,chosen);};
+  evfImg.onload=evfImg.onerror=tryDraw;
+  escImg.onload=escImg.onerror=tryDraw;
+  evfImg.src='https://i.imgur.com/aGci65i.png';
+  escImg.src='https://i.imgur.com/I0l4jby.png';
+}
+
+function drawFull(ctx,W,H,evfImg,escImg,chosen){
+  ctx.save();
+  const PAD=60; // side padding
+
+  // Logos
+  const evfH=110;
+  try{const ew=evfImg.naturalWidth?evfImg.naturalWidth*(evfH/evfImg.naturalHeight):320;ctx.drawImage(evfImg,W/2-ew/2,70,ew,evfH);}catch(e){}
+  const escH=90;
+  try{const esw=escImg.naturalWidth?escImg.naturalWidth*(escH/escImg.naturalHeight):240;ctx.drawImage(escImg,W/2-esw/2,200,esw,escH);}catch(e){}
+
+  // Title pill
+  const pillY=330;const pillH=90;
+  const btnG=ctx.createLinearGradient(PAD,0,W-PAD,0);
+  btnG.addColorStop(0,'#ff03ff');btnG.addColorStop(1,'#6c00ff');
+  ctx.fillStyle=btnG;rr(ctx,PAD,pillY,W-PAD*2,pillH,45);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 44px Montserrat,Arial,sans-serif';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText((currentSemi===1?'1ST':'2ND')+' SEMI-FINAL QUALIFIERS',W/2,pillY+pillH/2);
+
+  // Dynamic row height based on count — fit within canvas
+  // Available space: from cardY to footer area
+  const cardY=460;
+  const footerH=130; // space at bottom for footer text
+  const headerRowH=52; // "MY PREDICTIONS" label
+  const availH=H-cardY-footerH-headerRowH-40;
+  // Each row needs: country name + artist+song line + spacing
+  const n=chosen.length;
+  const rowH=Math.min(150,Math.max(100,Math.floor(availH/n)));
+  const cardH=n*rowH+headerRowH+24;
+
+  // Card background
+  ctx.fillStyle='rgba(255,255,255,0.05)';
+  ctx.strokeStyle='rgba(255,3,255,0.2)';ctx.lineWidth=2;
+  rr(ctx,PAD,cardY,W-PAD*2,cardH,24);ctx.fill();ctx.stroke();
+
+  // Card label
+  ctx.fillStyle='rgba(255,255,255,0.35)';
+  ctx.font='700 26px Montserrat,Arial,sans-serif';
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillText('MY PREDICTIONS ('+n+'/10)',PAD+40,cardY+headerRowH);
+
+  // Rows
+  const listY=cardY+headerRowH+16;
+  const innerW=W-PAD*2-20; // card inner width
+
+  chosen.forEach((c,i)=>{
+    const ry=listY+i*rowH;
+    const rowCenterY=ry+rowH/2;
+
+    // Alternating row background
+    if(i%2===0){
+      ctx.fillStyle='rgba(255,255,255,0.04)';
+      rr(ctx,PAD+10,ry+4,W-PAD*2-20,rowH-8,12);ctx.fill();
+    }
+
+    // Index number
+    ctx.fillStyle='#ff03ff';
+    ctx.font=`bold ${Math.round(rowH*0.24)}px Montserrat,Arial,sans-serif`;
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText((i+1)+'.',PAD+24,rowCenterY);
+
+    // Flag circle
+    const flagSize=Math.round(rowH*0.52);
+    const flagX=PAD+80;
+    const flagY=rowCenterY-flagSize/2;
+    ctx.save();
+    ctx.beginPath();ctx.arc(flagX+flagSize/2,rowCenterY,flagSize/2,0,Math.PI*2);ctx.clip();
+    // Flag image
+    const flagImg=flagCache[c.cc];
+    if(flagImg&&flagImg.naturalWidth>0){
+      ctx.drawImage(flagImg,flagX,flagY,flagSize,flagSize);
+    } else {
+      ctx.fillStyle='rgba(255,3,255,0.25)';ctx.fill();
+    }
+    ctx.restore();
+    // Flag border
+    ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(flagX+flagSize/2,rowCenterY,flagSize/2,0,Math.PI*2);ctx.stroke();
+
+    // Text area
+    const textX=flagX+flagSize+22;
+    const textMaxW=W-PAD-textX-70; // leave room for checkmark
+
+    // Country name
+    const nameFontSize=Math.round(rowH*0.26);
+    ctx.font=`bold ${nameFontSize}px Montserrat,Arial,sans-serif`;
+    ctx.fillStyle='#fff';ctx.textAlign='left';
+    const nameY=rowH>=130?rowCenterY-nameFontSize*0.55:rowCenterY-nameFontSize*0.3;
+    ctx.fillText(truncateText(ctx,c.name,textMaxW),textX,nameY);
+
+    // Artist · Song line
+    const subFontSize=Math.round(rowH*0.185);
+    ctx.font=`600 ${subFontSize}px Montserrat,Arial,sans-serif`;
+    ctx.fillStyle='rgba(255,180,255,0.75)';
+    const subText=c.artist+' · '+c.song;
+    const subY=rowH>=130?rowCenterY+subFontSize*0.8:rowCenterY+subFontSize*1.0;
+    ctx.fillText(truncateText(ctx,subText,textMaxW),textX,subY);
+
+    // Checkmark circle
+    const ckR=Math.round(rowH*0.22);
+    const ckX=W-PAD-ckR-20;
+    ctx.fillStyle='#ff03ff';ctx.beginPath();ctx.arc(ckX,rowCenterY,ckR,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.font=`bold ${Math.round(ckR*1.3)}px Montserrat,Arial,sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('✓',ckX,rowCenterY+2);
+  });
+
+  // Footer
+  const footY=cardY+cardH+36;
+  ctx.fillStyle='rgba(255,255,255,0.1)';ctx.fillRect(PAD,footY,W-PAD*2,1);
+  ctx.fillStyle='rgba(255,255,255,0.35)';
+  ctx.font='700 28px Montserrat,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('STAY UPDATED @ EUROVISIONFUN.COM',W/2,footY+50);
+  ctx.fillStyle='rgba(255,255,255,0.18)';ctx.font='500 22px Montserrat,Arial,sans-serif';
+  ctx.fillText('Eurovision Song Contest 2026 · Vienna',W/2,footY+88);
+  ctx.restore();
+
+  // Always show modal — works on all browsers including Instagram/TikTok in-app
+  setTimeout(()=>{
+    try{
+      const dataUrl=document.getElementById('exportCanvas').toDataURL('image/png');
+      document.getElementById('saveModalImg').src=dataUrl;
+      document.getElementById('saveModal').classList.add('open');
+    }catch(e){showToast('Something went wrong. Try again!');}
+  },200);
+}
+
+// Pre-load flag images into cache so canvas can draw them
+const flagCache={};
+function preloadFlags(){
+  const all=[...SEMI1,...SEMI2];
+  all.forEach(c=>{
+    if(flagCache[c.cc])return;
+    const img=new Image();img.crossOrigin='anonymous';
+    img.src=flagUrl(c.cc);
+    img.onload=()=>{flagCache[c.cc]=img;};
+  });
+}
+preloadFlags();
+</script>
+</body>
+</html>
