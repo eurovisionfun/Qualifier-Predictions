@@ -227,6 +227,26 @@ html,body{
 .stats-share-btn{width:100%;padding:13px;border-radius:40px;border:none;background:linear-gradient(90deg,#a855f7,#ff03ff);color:#fff;font-family:inherit;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s ease;-webkit-tap-highlight-color:transparent;}
 .stats-share-btn:active{opacity:0.75;}
 .community-modal-badge{background:linear-gradient(90deg,#a855f7,#ff03ff);color:#fff;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-radius:50px;padding:8px 20px;}
+/* ── LOCKED SCREEN ── */
+.locked-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 30px;text-align:center;gap:16px;min-height:300px;}
+.locked-icon{font-size:64px;}
+.locked-title{color:#fff;font-size:22px;font-weight:900;letter-spacing:1px;text-transform:uppercase;}
+.locked-msg{color:rgba(255,255,255,0.5);font-size:14px;font-weight:600;line-height:1.6;max-width:280px;}
+
+/* ── SCORE SCREEN ── */
+.score-screen{display:flex;flex-direction:column;align-items:center;padding:20px 16px;gap:12px;}
+.score-emoji{font-size:56px;line-height:1;}
+.score-num{color:#fff;font-size:72px;font-weight:900;line-height:1;letter-spacing:-2px;}
+.score-num span{font-size:36px;color:rgba(255,255,255,0.4);font-weight:700;}
+.score-label{color:rgba(255,255,255,0.45);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:-6px;}
+.score-sections{display:flex;gap:10px;width:100%;}
+.score-section{flex:1;background:rgba(255,255,255,0.04);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.08);}
+.score-correct{border-color:rgba(0,220,100,0.2);}
+.score-missed{border-color:rgba(255,80,80,0.2);}
+.score-section-title{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:8px;}
+.score-country{font-size:12px;font-weight:700;color:#fff;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.score-country:last-child{border-bottom:none;}
+.score-country.muted{color:rgba(255,255,255,0.3);}
 </style>
 </head>
 <body>
@@ -469,35 +489,241 @@ function openSemi(n){
   const picker=document.getElementById('pickerScreen');
   document.getElementById('pickerTitle').textContent=(n===1?'1st':'2nd')+' Semi-Final';
 
-  // Check if already submitted
+  // Slide to picker first, then load state
+  menu.classList.add('slide-out');
+  menu.classList.remove('active');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>picker.classList.add('active')));
+
   const submitted = localStorage.getItem('evf_submitted_sf'+n);
   const savedPicks = JSON.parse(localStorage.getItem('evf_picks_sf'+n)||'[]');
-
   buildList(n===1?SEMI1:SEMI2, savedPicks);
 
-  // Update bottom buttons based on submission state
+  // Check time-based lock first (22:00 Athens = 20:00 UTC)
+  const semifinalTime = n===1 ? SF1_TIME : SF2_TIME;
+  const nowPastKickoff = new Date() >= semifinalTime;
+
+  // Fetch Supabase state
+  fetchSemiState(n).then(state => {
+    const isLocked = state.locked || nowPastKickoff;
+    const isRevealed = state.revealed && state.qualifiers.length > 0;
+    const saveBtn = document.getElementById('saveShareBtn');
+    const submittedActions = document.getElementById('submittedActions');
+    const hint = document.getElementById('saveHint');
+
+    if (isRevealed && submitted) {
+      // Show score reveal
+      showScoreReveal(savedPicks, state.qualifiers);
+      saveBtn.style.display='none';
+      submittedActions.style.display='none';
+      hint.textContent='';
+    } else if (isRevealed && !submitted) {
+      // Revealed but didn't submit — show locked
+      showLockedMessage(n, true);
+      saveBtn.style.display='none';
+      submittedActions.style.display='none';
+      hint.textContent='';
+    } else if (isLocked && !submitted) {
+      // Locked, no submission
+      showLockedMessage(n, false);
+      saveBtn.style.display='none';
+      submittedActions.style.display='none';
+      hint.textContent='';
+    } else if (submitted) {
+      saveBtn.style.display='none';
+      submittedActions.style.display='flex';
+      hint.textContent='Your predictions are saved ✅ — download again or see community stats';
+    } else {
+      saveBtn.style.display='block';
+      submittedActions.style.display='none';
+      hint.textContent='Story-ready image for Instagram, X & Facebook';
+    }
+  });
+}
+function showLockedMessage(semi, resultsLater) {
+  const list = document.getElementById('countriesList');
+  list.innerHTML = `
+    <div class="locked-screen">
+      <div class="locked-icon">🔒</div>
+      <div class="locked-title">Predictions Closed</div>
+      <div class="locked-msg">${resultsLater
+        ? 'The results are being processed.<br>Come back soon to see your score!'
+        : 'Predictions for the ' + (semi===1?'1st':'2nd') + ' Semi-Final are now closed.<br>Tune in tonight and come back after the show to see your score!'
+      }</div>
+    </div>`;
+}
+
+function showScoreReveal(myPicks, qualifiers) {
+  const correct = myPicks.filter(p => qualifiers.includes(p));
+  const missed = qualifiers.filter(q => !myPicks.includes(q));
+  const wrong = myPicks.filter(p => !qualifiers.includes(p));
+  const score = correct.length;
+  const emoji = score===10?'🏆':score>=8?'🔥':score>=6?'👏':score>=4?'🎯':'😅';
+
+  const list = document.getElementById('countriesList');
+  list.innerHTML = `
+    <div class="score-screen">
+      <div class="score-emoji">${emoji}</div>
+      <div class="score-num">${score}<span>/10</span></div>
+      <div class="score-label">Correct Predictions</div>
+      <div class="score-sections">
+        <div class="score-section score-correct">
+          <div class="score-section-title">✅ You got right (${correct.length})</div>
+          ${correct.map(c=>`<div class="score-country">${c}</div>`).join('')||'<div class="score-country muted">None</div>'}
+        </div>
+        <div class="score-section score-missed">
+          <div class="score-section-title">❌ You missed (${missed.length})</div>
+          ${missed.map(c=>`<div class="score-country">${c}</div>`).join('')||'<div class="score-country muted">None — Perfect!</div>'}
+        </div>
+      </div>
+    </div>`;
+
+  // Show score share button
   const saveBtn = document.getElementById('saveShareBtn');
   const submittedActions = document.getElementById('submittedActions');
   const hint = document.getElementById('saveHint');
-  if(submitted){
-    saveBtn.style.display='none';
-    submittedActions.style.display='flex';
-    hint.textContent='Your predictions are saved ✅ — download again or see community stats';
-  } else {
-    saveBtn.style.display='block';
-    submittedActions.style.display='none';
-    hint.textContent='Story-ready image for Instagram, X & Facebook';
-  }
-
-  menu.classList.add('slide-out');
-  menu.classList.remove('active');
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      picker.classList.add('active');
-    });
-  });
+  saveBtn.style.display='none';
+  submittedActions.innerHTML=`
+    <button class="save-btn" onclick="generateScoreCard(${JSON.stringify(correct)},${JSON.stringify(missed)},${score})">🏆 Share My Score</button>
+    <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
+  submittedActions.style.display='flex';
+  hint.textContent='Share your score with your friends!';
 }
-function goBack(){
+
+function generateScoreCard(correct, missed, score) {
+  showToast('Creating score card…');
+  const W=1080,H=1920;
+  const canvas=document.getElementById('exportCanvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+
+  // Background
+  const grd=ctx.createLinearGradient(0,0,0,H);
+  grd.addColorStop(0,'#0a0020');grd.addColorStop(0.5,'#1a0040');grd.addColorStop(1,'#0d001f');
+  ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+  [[W*.15,H*.08,600,'rgba(120,0,255,0.2)'],[W*.9,H*.6,500,'rgba(255,3,255,0.15)']].forEach(([cx,cy,r,col])=>{
+    const rg=ctx.createRadialGradient(cx,cy,0,cx,cy,r);rg.addColorStop(0,col);rg.addColorStop(1,'transparent');
+    ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
+  });
+
+  const emoji=score===10?'🏆':score>=8?'🔥':score>=6?'👏':score>=4?'🎯':'😅';
+  const evfImg=new Image(),escImg=new Image();
+  evfImg.crossOrigin='anonymous';escImg.crossOrigin='anonymous';
+  let done=0;
+  const tryDraw=()=>{
+    if(++done<2)return;
+    const PAD=60;ctx.save();
+
+    // Logos side by side
+    const logoH=80,logoY=50,centerX=W/2,gap=28;
+    try{const ew=evfImg.naturalWidth>0?evfImg.naturalWidth*(logoH/evfImg.naturalHeight):300;ctx.drawImage(evfImg,centerX-gap/2-ew,logoY,ew,logoH);}catch(e){}
+    try{const esw=escImg.naturalWidth>0?escImg.naturalWidth*(logoH/escImg.naturalHeight):200;ctx.drawImage(escImg,centerX+gap/2,logoY,esw,logoH);}catch(e){}
+    ctx.fillStyle='rgba(255,255,255,0.15)';ctx.fillRect(centerX-1,logoY+10,2,logoH-20);
+
+    // Semi label
+    ctx.fillStyle='rgba(168,85,247,0.9)';ctx.font='800 26px Montserrat,Arial,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText((currentSemi===1?'1ST':'2ND')+' SEMI-FINAL · MY SCORE',W/2,175);
+
+    // Big score circle
+    const circR=200,circX=W/2,circY=420;
+    const circG=ctx.createRadialGradient(circX,circY,0,circX,circY,circR);
+    circG.addColorStop(0,'rgba(255,3,255,0.35)');circG.addColorStop(1,'rgba(120,0,255,0.1)');
+    ctx.fillStyle=circG;ctx.beginPath();ctx.arc(circX,circY,circR,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(255,3,255,0.5)';ctx.lineWidth=4;
+    ctx.beginPath();ctx.arc(circX,circY,circR,0,Math.PI*2);ctx.stroke();
+
+    // Emoji
+    ctx.font='120px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(emoji,circX,circY-50);
+
+    // Score number
+    ctx.fillStyle='#fff';ctx.font='900 100px Montserrat,Arial,sans-serif';
+    ctx.fillText(score,circX-30,circY+80);
+    ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='700 42px Montserrat,Arial,sans-serif';
+    ctx.fillText('/10',circX+62,circY+90);
+
+    // Label
+    ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='700 30px Montserrat,Arial,sans-serif';
+    ctx.fillText('CORRECT PREDICTIONS',W/2,circY+circR+40);
+
+    // Divider
+    const divG=ctx.createLinearGradient(PAD,0,W-PAD,0);
+    divG.addColorStop(0,'transparent');divG.addColorStop(0.3,'rgba(255,3,255,0.5)');divG.addColorStop(0.7,'rgba(120,0,255,0.5)');divG.addColorStop(1,'transparent');
+    ctx.fillStyle=divG;ctx.fillRect(PAD,680,W-PAD*2,2);
+
+    // Two columns: correct & missed
+    const colW=(W-PAD*2-30)/2;
+    const col1X=PAD,col2X=PAD+colW+30;
+    const colY=710;
+    const rowH=88;
+
+    // Correct header
+    ctx.fillStyle='rgba(0,220,100,0.9)';ctx.font='800 28px Montserrat,Arial,sans-serif';
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText('✅ Got Right ('+correct.length+')',col1X,colY);
+
+    // Missed header
+    ctx.fillStyle='rgba(255,80,80,0.9)';
+    ctx.fillText('❌ Missed ('+missed.length+')',col2X,colY);
+
+    const maxRows=Math.min(10,Math.max(correct.length,missed.length));
+    for(let i=0;i<maxRows;i++){
+      const rowY=colY+42+i*rowH;
+      // Correct row
+      if(i<correct.length){
+        const fi=flagCache[Object.values({...SEMI1,...SEMI2}).find?.[correct[i]]?.cc]||null;
+        const cc=[...SEMI1,...SEMI2].find(c=>c.name===correct[i])?.cc;
+        const fi2=cc?flagCache[cc]:null;
+        ctx.fillStyle='rgba(0,220,100,0.08)';rr(ctx,col1X,rowY,colW,rowH-8,10);ctx.fill();
+        if(fi2&&fi2.naturalWidth>0){
+          const fR=26;
+          ctx.save();ctx.beginPath();ctx.arc(col1X+fR+8,rowY+(rowH-8)/2,fR,0,Math.PI*2);ctx.clip();
+          ctx.drawImage(fi2,col1X+8,rowY+(rowH-8)/2-fR,fR*2,fR*2);ctx.restore();
+        }
+        ctx.fillStyle='#fff';ctx.font=`700 ${Math.min(28,Math.floor(colW*0.1))}px Montserrat,Arial,sans-serif`;
+        ctx.textAlign='left';ctx.textBaseline='middle';
+        ctx.fillText(truncateText(ctx,correct[i],colW-80),col1X+70,rowY+(rowH-8)/2);
+      }
+      // Missed row
+      if(i<missed.length){
+        const cc2=[...SEMI1,...SEMI2].find(c=>c.name===missed[i])?.cc;
+        const fi3=cc2?flagCache[cc2]:null;
+        ctx.fillStyle='rgba(255,80,80,0.08)';rr(ctx,col2X,rowY,colW,rowH-8,10);ctx.fill();
+        if(fi3&&fi3.naturalWidth>0){
+          const fR=26;
+          ctx.save();ctx.beginPath();ctx.arc(col2X+fR+8,rowY+(rowH-8)/2,fR,0,Math.PI*2);ctx.clip();
+          ctx.drawImage(fi3,col2X+8,rowY+(rowH-8)/2-fR,fR*2,fR*2);ctx.restore();
+        }
+        ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font=`700 ${Math.min(28,Math.floor(colW*0.1))}px Montserrat,Arial,sans-serif`;
+        ctx.textAlign='left';ctx.textBaseline='middle';
+        ctx.fillText(truncateText(ctx,missed[i],colW-80),col2X+70,rowY+(rowH-8)/2);
+      }
+    }
+
+    // Footer
+    ctx.fillStyle='rgba(255,255,255,0.1)';ctx.fillRect(PAD,H-120,W-PAD*2,1);
+    ctx.fillStyle='rgba(255,255,255,0.35)';ctx.font='700 26px Montserrat,Arial,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('STAY UPDATED @ EUROVISIONFUN.COM',W/2,H-80);
+    ctx.fillStyle='rgba(255,255,255,0.18)';ctx.font='500 22px Montserrat,Arial,sans-serif';
+    ctx.fillText('Eurovision Song Contest 2026 · Vienna',W/2,H-44);
+    ctx.restore();
+
+    setTimeout(()=>{
+      try{
+        const dataUrl=document.getElementById('exportCanvas').toDataURL('image/png');
+        document.getElementById('saveModalImg').src=dataUrl;
+        document.getElementById('saveModalSaved').style.display='none';
+        document.getElementById('saveModal').classList.add('open');
+      }catch(e){showToast('Something went wrong!');}
+    },200);
+  };
+  evfImg.onload=evfImg.onerror=tryDraw;
+  escImg.onload=escImg.onerror=tryDraw;
+  evfImg.src='https://i.imgur.com/CVmtmbz.png';
+  escImg.src='https://i.imgur.com/I0l4jby.png';
+}
+
+
   const menu=document.getElementById('menuScreen');
   const picker=document.getElementById('pickerScreen');
   picker.classList.remove('active');
@@ -787,7 +1013,24 @@ function submitToSupabase(semi, countries) {
   });
 }
 
-async function fetchStats(semi) {
+async function fetchSemiState(semi) {
+  try {
+    const [settingsRes, resultsRes] = await Promise.all([
+      fetch(SUPABASE_URL + '/rest/v1/settings?select=key,value', { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }),
+      fetch(SUPABASE_URL + '/rest/v1/results?select=country&semi=eq.' + semi, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } })
+    ]);
+    const settings = await settingsRes.json();
+    const results = await resultsRes.json();
+    const get = key => (settings.find(s => s.key === key) || {}).value === 'true';
+    return {
+      locked: get('sf' + semi + '_locked'),
+      revealed: get('sf' + semi + '_revealed'),
+      qualifiers: results.map(r => r.country)
+    };
+  } catch(e) { return { locked: false, revealed: false, qualifiers: [] }; }
+}
+
+
   const res = await fetch(
     SUPABASE_URL + '/rest/v1/predictions?select=countries&semi=eq.' + semi,
     {
