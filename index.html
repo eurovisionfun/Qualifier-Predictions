@@ -1118,7 +1118,7 @@ function drawCommunityCanvas(top10, counts, total) {
     ctx.save();
 
     // ── LOGOS SIDE BY SIDE ──
-    const logoH=80, logoY=160, centerX=W/2, gap=28;
+    const logoH=80, logoY=170, centerX=W/2, gap=28;
     try{
       const ew=evfImg.naturalWidth>0?evfImg.naturalWidth*(logoH/evfImg.naturalHeight):300;
       ctx.drawImage(evfImg, centerX-gap/2-ew, logoY, ew, logoH);
@@ -1130,24 +1130,24 @@ function drawCommunityCanvas(top10, counts, total) {
     ctx.fillStyle='rgba(255,255,255,0.15)';
     ctx.fillRect(centerX-1, logoY+10, 2, logoH-20);
 
-    // "COMMUNITY VOTE" label
+    // "COMMUNITY VOTE" label — below logos with breathing room
     ctx.fillStyle='rgba(168,85,247,0.9)';
     ctx.font='800 26px Montserrat,Arial,sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('▸ COMMUNITY VOTE ◂', W/2, 198);
+    ctx.fillText('▸ COMMUNITY VOTE ◂', W/2, logoY+logoH+42);
 
     // Big title block
     ctx.fillStyle='#fff';
     ctx.font='900 72px Montserrat,Arial,sans-serif';
-    ctx.fillText('TOP 10', W/2, 278);
+    ctx.fillText('TOP 10', W/2, logoY+logoH+116);
 
     ctx.font='900 40px Montserrat,Arial,sans-serif';
     ctx.fillStyle='rgba(255,255,255,0.55)';
-    ctx.fillText('PREDICTED QUALIFIERS', W/2, 332);
+    ctx.fillText('PREDICTED QUALIFIERS', W/2, logoY+logoH+170);
 
     // Semi label pill
     const semiLabel=(currentSemi===1?'1ST':'2ND')+' SEMI-FINAL';
-    const pillW=340, pillH=52, pillX=W/2-pillW/2, pillY=362;
+    const pillW=340, pillH=52, pillX=W/2-pillW/2, pillY=logoY+logoH+200;
     const pillG=ctx.createLinearGradient(pillX,0,pillX+pillW,0);
     pillG.addColorStop(0,'#7c00ff');pillG.addColorStop(1,'#ff03ff');
     ctx.fillStyle=pillG; rr(ctx,pillX,pillY,pillW,pillH,26); ctx.fill();
@@ -1157,7 +1157,7 @@ function drawCommunityCanvas(top10, counts, total) {
     // Submission count
     ctx.fillStyle='rgba(255,255,255,0.35)';
     ctx.font='600 24px Montserrat,Arial,sans-serif';
-    ctx.fillText(`Based on ${total.toLocaleString()} prediction${total!==1?'s':''}`, W/2, 454);
+    ctx.fillText(`Based on ${total.toLocaleString()} prediction${total!==1?'s':''}`, W/2, pillY+pillH+36);
 
     // Divider
     const divG=ctx.createLinearGradient(PAD,0,W-PAD,0);
@@ -1165,10 +1165,11 @@ function drawCommunityCanvas(top10, counts, total) {
     divG.addColorStop(0.3,'rgba(168,85,247,0.6)');
     divG.addColorStop(0.7,'rgba(255,3,255,0.6)');
     divG.addColorStop(1,'transparent');
-    ctx.fillStyle=divG; ctx.fillRect(PAD,478,W-PAD*2,2);
+    const dividerY=pillY+pillH+64;
+    ctx.fillStyle=divG; ctx.fillRect(PAD,dividerY,W-PAD*2,2);
 
     // ── COUNTRIES LIST ── generous bottom space for user text/links
-    const listTop=494;
+    const listTop=dividerY+18;
     const listBottom=H-260;
     const availH=listBottom-listTop;
     const rowH=Math.floor(availH/10);
