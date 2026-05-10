@@ -231,7 +231,9 @@ html,body{
 .locked-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 30px;text-align:center;gap:16px;min-height:300px;}
 .locked-icon{font-size:64px;}
 .locked-title{color:#fff;font-size:22px;font-weight:900;letter-spacing:1px;text-transform:uppercase;}
-.locked-msg{color:rgba(255,255,255,0.5);font-size:14px;font-weight:600;line-height:1.6;max-width:280px;}
+.locked-msg{color:rgba(255,255,255,0.5);font-size:13px;font-weight:600;line-height:1.7;max-width:300px;}
+.locked-msg strong{color:rgba(255,255,255,0.8);}
+.locked-yt{display:inline-block;margin-top:6px;color:#ff03ff;font-weight:800;font-size:12px;text-decoration:none;background:rgba(255,3,255,0.1);border:1px solid rgba(255,3,255,0.3);border-radius:20px;padding:6px 16px;}
 
 /* ── SCORE SCREEN ── */
 .score-screen{display:flex;flex-direction:column;align-items:center;padding:20px 16px;gap:12px;}
@@ -269,15 +271,19 @@ html,body{
         <div class="how-steps">
           <div class="how-step">
             <div class="how-icon">1</div>
-            <div class="how-text">Choose a Semi-Final below</div>
+            <div class="how-text">Choose a Semi-Final &amp; pick up to 10 countries you think will qualify</div>
           </div>
           <div class="how-step">
             <div class="how-icon">2</div>
-            <div class="how-text">Tap up to 10 countries you think will qualify</div>
+            <div class="how-text">Save &amp; share your predictions as an Instagram story before the show</div>
           </div>
           <div class="how-step">
             <div class="how-icon">3</div>
-            <div class="how-text">Save your predictions as a story image &amp; share!</div>
+            <div class="how-text">Watch the Semi-Final live — predictions lock at 22:00</div>
+          </div>
+          <div class="how-step">
+            <div class="how-icon">4</div>
+            <div class="how-text">Come back after the show to see your score &amp; share it!</div>
           </div>
         </div>
       </div>
@@ -285,7 +291,7 @@ html,body{
       <div class="menu-btns">
         <div class="cd-card" style="margin-bottom:10px;">
           <div class="cd-label cd-label-1"><span class="cd-dot cd-dot-1"></span>1st Semi-Final</div>
-          <div class="cd-date">Monday 12 May 2026 · 22:00 Athens time</div>
+          <div class="cd-date">Tuesday 12 May 2026 · 22:00 Athens time</div>
           <div id="cd1-wrap"></div>
         </div>
         <button class="menu-btn menu-btn-1" id="btn-sf1" onclick="handleSemiBtn(1)">
@@ -541,13 +547,18 @@ function openSemi(n){
 }
 function showLockedMessage(semi, resultsLater) {
   const list = document.getElementById('countriesList');
+  const showDay = semi === 1 ? 'Tuesday 12 May' : 'Thursday 14 May';
   list.innerHTML = `
     <div class="locked-screen">
       <div class="locked-icon">🔒</div>
       <div class="locked-title">Predictions Closed</div>
       <div class="locked-msg">${resultsLater
-        ? 'The results are being processed.<br>Come back soon to see your score!'
-        : 'Predictions for the ' + (semi===1?'1st':'2nd') + ' Semi-Final are now closed.<br>Tune in tonight and come back after the show to see your score!'
+        ? `The results are being processed.<br>Come back soon to see your score!<br><br>
+           🎥 In the meantime, join our <strong>live reaction stream</strong> on YouTube!<br>
+           <a class="locked-yt" href="https://www.youtube.com/@eurovisionfun_" target="_blank">▶ youtube.com/@eurovisionfun_</a>`
+        : `Predictions for the ${semi===1?'1st':'2nd'} Semi-Final (${showDay}) are now closed.<br><br>
+           🎥 Watch the show &amp; join our <strong>live commentary stream</strong> on YouTube tonight — then come back after 01:00 to see your score!<br><br>
+           <a class="locked-yt" href="https://www.youtube.com/@eurovisionfun_" target="_blank">▶ youtube.com/@eurovisionfun_</a>`
       }</div>
     </div>`;
 }
