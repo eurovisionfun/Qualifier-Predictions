@@ -943,14 +943,6 @@ function drawFull(ctx,W,H,evfImg,escImg,chosen){
     ctx.fillText('✓',ckX,rowCenterY+2);
   });
 
-  // Footer
-  const footY=cardY+cardH+28;
-  ctx.fillStyle='rgba(255,255,255,0.1)'; ctx.fillRect(PAD,footY,W-PAD*2,1);
-  ctx.fillStyle='rgba(255,255,255,0.35)';
-  ctx.font='700 28px Montserrat,Arial,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText('STAY UPDATED @ EUROVISIONFUN.COM',W/2,footY+44);
-  ctx.fillStyle='rgba(255,255,255,0.18)'; ctx.font='500 22px Montserrat,Arial,sans-serif';
-  ctx.fillText('Eurovision Song Contest 2026 · Vienna',W/2,footY+80);
   ctx.restore();
 
   // Submit to Supabase
