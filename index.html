@@ -83,7 +83,10 @@ html,body{
 .menu-btn:active{opacity:0.72;}
 .menu-btn-1{background:linear-gradient(90deg,#ff03ff,#8800ff);color:#fff;}
 .menu-btn-2{background:linear-gradient(90deg,#8800ff,#ff03ff);color:#fff;}
-.menu-btn-num{background:rgba(255,255,255,0.22);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+.menu-btn-stats{background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);}
+.menu-btn-icon{font-size:16px;opacity:0.6;}
+.stats-divider{text-align:center;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin:4px 0 2px;}
+.menu-btn-arrow{font-size:18px;opacity:0.8;flex-shrink:0;}
 
 .countdowns-wrap{display:flex;flex-direction:column;gap:10px;width:100%;margin-bottom:22px;}
 .cd-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 16px;}
@@ -162,6 +165,9 @@ html,body{
 .bottom-actions{padding:11px 13px;display:flex;flex-direction:column;gap:7px;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;padding-bottom:max(11px,env(safe-area-inset-bottom,11px));}
 .save-btn{padding:13px;border-radius:40px;border:none;background:linear-gradient(90deg,#ff03ff,#6c00ff);color:#fff;font-family:inherit;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s ease;-webkit-tap-highlight-color:transparent;user-select:none;}
 .save-btn:active{opacity:0.75;}
+.stats-btn-picker{background:rgba(255,3,255,0.15);border:1.5px solid #ff03ff;}
+.submitted-actions{display:flex;gap:8px;width:100%;}
+.submitted-actions .save-btn{flex:1;font-size:11px;padding:12px 8px;}
 .save-hint{text-align:center;color:rgba(255,255,255,0.3);font-size:10px;font-weight:600;letter-spacing:0.3px;}
 .toast-bar{background:#ff03ff;color:#fff;text-align:center;padding:7px;font-size:11px;font-weight:800;letter-spacing:0.3px;opacity:0;transition:opacity 0.3s;border-radius:8px;margin:0 0 4px;flex-shrink:0;}
 .toast-bar.show{opacity:1;}
@@ -171,7 +177,33 @@ html,body{
 .save-modal-overlay.open{display:flex;}
 .save-modal-img{max-width:min(300px,80vw);max-height:55vh;border-radius:12px;object-fit:contain;box-shadow:0 0 40px rgba(255,3,255,0.4);}
 .save-modal-hint{color:#fff;font-size:13px;font-weight:700;letter-spacing:0.3px;text-align:center;background:rgba(255,3,255,0.15);border:1px solid rgba(255,3,255,0.4);border-radius:10px;padding:10px 18px;max-width:280px;}
-.save-modal-close{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:50px;color:#fff;font-family:inherit;font-weight:800;font-size:12px;letter-spacing:1px;padding:10px 28px;cursor:pointer;text-transform:uppercase;}
+.save-modal-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.save-modal-saved{
+  background:rgba(0,200,100,0.15);border:1px solid rgba(0,200,100,0.4);
+  border-radius:10px;padding:10px 18px;
+  color:#00e87a;font-size:13px;font-weight:800;letter-spacing:0.3px;text-align:center;
+}
+.save-modal-close{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:50px;color:#fff;font-family:inherit;font-weight:800;font-size:12px;letter-spacing:1px;padding:10px 24px;cursor:pointer;text-transform:uppercase;-webkit-tap-highlight-color:transparent;}
+.save-modal-stats-btn{background:linear-gradient(90deg,#ff03ff,#6c00ff);border:none;border-radius:50px;color:#fff;font-family:inherit;font-weight:800;font-size:12px;letter-spacing:1px;padding:10px 24px;cursor:pointer;text-transform:uppercase;-webkit-tap-highlight-color:transparent;}
+
+/* ── STATS SCREEN ── */
+#statsScreen{overflow:hidden;}
+.stats-top{padding:13px 14px 11px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;}
+.stats-header{flex:1;}
+.stats-header h2{color:#fff;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px;}
+.stats-header p{color:rgba(255,255,255,0.4);font-size:10px;font-weight:600;letter-spacing:0.3px;margin-top:2px;}
+.stats-body{flex:1;overflow-y:auto;padding:14px 14px;}
+.stats-loading{display:flex;align-items:center;justify-content:center;height:100%;color:rgba(255,255,255,0.4);font-size:13px;font-weight:700;letter-spacing:1px;flex-direction:column;gap:12px;}
+.stats-spinner{width:28px;height:28px;border:3px solid rgba(255,3,255,0.2);border-top-color:#ff03ff;border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.stats-total{font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;text-align:center;}
+.stats-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.stats-flag{width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.15);}
+.stats-flag img{width:100%;height:100%;object-fit:cover;}
+.stats-name{width:80px;flex-shrink:0;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stats-bar-wrap{flex:1;height:18px;background:rgba(255,255,255,0.07);border-radius:9px;overflow:hidden;}
+.stats-bar{height:100%;border-radius:9px;background:linear-gradient(90deg,#ff03ff,#8800ff);transition:width 0.8s cubic-bezier(0.4,0,0.2,1);}
+.stats-pct{width:36px;flex-shrink:0;font-size:11px;font-weight:800;color:#ff03ff;text-align:right;}
 
 @media(min-width:600px){
   .cd-num{font-size:30px;}
@@ -179,6 +211,22 @@ html,body{
   .cname{font-size:13px;}
   .cartist{font-size:11px;}
 }
+/* ── AGREEMENT CARD ── */
+.agreement-card{background:rgba(255,3,255,0.08);border:1.5px solid rgba(255,3,255,0.25);border-radius:14px;padding:14px 16px;margin-bottom:16px;}
+.agreement-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.agreement-emoji{font-size:28px;flex-shrink:0;}
+.agreement-title{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+.agreement-label{font-size:13px;font-weight:700;color:#fff;margin-top:2px;}
+.agreement-pct{margin-left:auto;font-size:28px;font-weight:900;color:#ff03ff;flex-shrink:0;letter-spacing:-1px;}
+.agreement-bar-wrap{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-bottom:8px;}
+.agreement-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,#ff03ff,#8800ff);width:0%;transition:width 0.9s cubic-bezier(0.4,0,0.2,1);}
+.agreement-sub{font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:0.2px;}
+.my-pick-dot{color:#ff03ff;font-size:10px;margin-left:3px;vertical-align:middle;}
+.stats-legend{font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);text-align:center;margin-top:12px;letter-spacing:0.5px;}
+.stats-footer-actions{padding:11px 13px;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;padding-bottom:max(11px,env(safe-area-inset-bottom,11px));}
+.stats-share-btn{width:100%;padding:13px;border-radius:40px;border:none;background:linear-gradient(90deg,#a855f7,#ff03ff);color:#fff;font-family:inherit;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity 0.2s ease;-webkit-tap-highlight-color:transparent;}
+.stats-share-btn:active{opacity:0.75;}
+.community-modal-badge{background:linear-gradient(90deg,#a855f7,#ff03ff);color:#fff;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;border-radius:50px;padding:8px 20px;}
 </style>
 </head>
 <body>
@@ -188,7 +236,7 @@ html,body{
   <div class="screen active" id="menuScreen" style="transform:translateX(0);opacity:1;pointer-events:auto;">
     <div class="menu-inner">
       <div class="logo-stack">
-        <img src="https://i.imgur.com/aGci65i.png" class="evf-logo" alt="EurovisionFun" onerror="this.style.visibility='hidden'">
+        <img src="https://i.imgur.com/CVmtmbz.png" class="evf-logo" alt="EurovisionFun" onerror="this.style.visibility='hidden'">
         <img src="https://i.imgur.com/I0l4jby.png" class="esc-logo" alt="Eurovision Song Contest Vienna 2026" onerror="this.style.visibility='hidden'">
       </div>
       <div class="menu-title-block">
@@ -217,11 +265,11 @@ html,body{
       <div class="menu-btns">
         <div class="cd-card" style="margin-bottom:10px;">
           <div class="cd-label cd-label-1"><span class="cd-dot cd-dot-1"></span>1st Semi-Final</div>
-          <div class="cd-date">Tuesday 12 May 2026 · 22:00 Athens time</div>
+          <div class="cd-date">Monday 12 May 2026 · 22:00 Athens time</div>
           <div id="cd1-wrap"></div>
         </div>
-        <button class="menu-btn menu-btn-1" onclick="openSemi(1)">
-          <span>1st Semi-Final</span><span class="menu-btn-num">1</span>
+        <button class="menu-btn menu-btn-1" id="btn-sf1" onclick="handleSemiBtn(1)">
+          <span id="btn-sf1-label">1st Semi-Final</span><span class="menu-btn-arrow" id="btn-sf1-icon">→</span>
         </button>
 
         <div class="cd-card" style="margin-top:10px;margin-bottom:10px;">
@@ -229,8 +277,16 @@ html,body{
           <div class="cd-date">Thursday 14 May 2026 · 22:00 Athens time</div>
           <div id="cd2-wrap"></div>
         </div>
-        <button class="menu-btn menu-btn-2" onclick="openSemi(2)">
-          <span>2nd Semi-Final</span><span class="menu-btn-num">2</span>
+        <button class="menu-btn menu-btn-2" id="btn-sf2" onclick="handleSemiBtn(2)">
+          <span id="btn-sf2-label">2nd Semi-Final</span><span class="menu-btn-arrow" id="btn-sf2-icon">→</span>
+        </button>
+
+        <div class="stats-divider">— Community Predictions —</div>
+        <button class="menu-btn menu-btn-stats" onclick="openStatsFromMenu(1)">
+          <span>📊 SF1 Community Stats</span><span class="menu-btn-icon">→</span>
+        </button>
+        <button class="menu-btn menu-btn-stats" onclick="openStatsFromMenu(2)">
+          <span>📊 SF2 Community Stats</span><span class="menu-btn-icon">→</span>
         </button>
       </div>
 
@@ -249,7 +305,7 @@ html,body{
         <h2 id="pickerTitle">1st Semi-Final</h2>
         <p id="pickerSub">Tap to select your qualifiers</p>
       </div>
-      <img src="https://i.imgur.com/aGci65i.png" class="evf-top" alt="EurovisionFun" onerror="this.style.visibility='hidden'">
+      <img src="https://i.imgur.com/CVmtmbz.png" class="evf-top" alt="EurovisionFun" onerror="this.style.visibility='hidden'">
     </div>
     <div class="counter-strip">
       <span class="counter-label">Selected</span>
@@ -258,18 +314,54 @@ html,body{
     <div class="countries-list" id="countriesList"></div>
     <div class="bottom-actions">
       <div class="toast-bar" id="toastBar"></div>
-      <button class="save-btn" onclick="generateCard()">&#128247; Save &amp; Share My Predictions</button>
-      <div class="save-hint">Story-ready image for Instagram, X &amp; Facebook</div>
+      <button class="save-btn" id="saveShareBtn" onclick="generateCard()">📷 Save &amp; Share My Predictions</button>
+      <div class="submitted-actions" id="submittedActions" style="display:none;">
+        <button class="save-btn" onclick="generateCard()">📷 Download My Predictions</button>
+        <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>
+      </div>
+      <div class="save-hint" id="saveHint">Story-ready image for Instagram, X &amp; Facebook</div>
     </div>
   </div>
 
 </div>
 
+  <!-- STATS SCREEN -->
+  <div class="screen" id="statsScreen">
+    <div class="stats-top">
+      <button class="back-btn" onclick="goBackFromStats()">&#8592;</button>
+      <div class="stats-header">
+        <h2 id="statsTitle">Community Predictions</h2>
+        <p id="statsSubtitle">What everyone thinks will qualify</p>
+      </div>
+      <img src="https://i.imgur.com/CVmtmbz.png" class="evf-top" alt="EurovisionFun" onerror="this.style.visibility='hidden'">
+    </div>
+    <div class="stats-body" id="statsBody">
+      <div class="stats-loading"><div class="stats-spinner"></div>Loading data…</div>
+    </div>
+    <div class="stats-footer-actions">
+      <button class="stats-share-btn" onclick="generateCommunityCard()">📸 Share Community Results</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Community share modal -->
+<div class="save-modal-overlay" id="communityModal">
+  <div class="community-modal-badge">📊 EurovisionFun Community</div>
+  <div class="save-modal-hint">📲 Long-press the image &amp; tap "Save to Photos"</div>
+  <img id="communityModalImg" class="save-modal-img" src="" alt="Community predictions">
+  <button class="save-modal-close" onclick="document.getElementById('communityModal').classList.remove('open')">✕ Close</button>
+</div>
+
 <!-- Save modal for in-app browsers -->
 <div class="save-modal-overlay" id="saveModal">
+  <div class="save-modal-saved" id="saveModalSaved" style="display:none;">✅ Your predictions have been saved!</div>
   <div class="save-modal-hint">📲 Long-press the image below &amp; tap "Save to Photos"</div>
   <img id="saveModalImg" class="save-modal-img" src="" alt="Your predictions">
-  <button class="save-modal-close" onclick="document.getElementById('saveModal').classList.remove('open')">✕ Close</button>
+  <div class="save-modal-btns">
+    <button class="save-modal-close" onclick="closeSaveModal()">✕ Close</button>
+    <button class="save-modal-stats-btn" onclick="closeSaveModal();openStats()">📊 See Community Stats</button>
+  </div>
 </div>
 
 <canvas id="exportCanvas" style="display:none;position:fixed;left:-9999px;top:-9999px;"></canvas>
@@ -354,17 +446,51 @@ setInterval(()=>{tickCountdown(SF1_TIME,'cd1-wrap');tickCountdown(SF2_TIME,'cd2-
 
 function flagUrl(cc){return'https://flagcdn.com/w80/'+cc+'.png';}
 
+function updateMenuButtons() {
+  [1, 2].forEach(n => {
+    const submitted = localStorage.getItem('evf_submitted_sf' + n);
+    const label = document.getElementById('btn-sf' + n + '-label');
+    const icon = document.getElementById('btn-sf' + n + '-icon');
+    if (submitted && label && icon) {
+      label.textContent = '✅ SF' + n + ' · My Predictions';
+      icon.textContent = '→';
+      icon.style.fontSize = '16px';
+    }
+  });
+}
+
+function handleSemiBtn(n) {
+  openSemi(n);
+}
+
 function openSemi(n){
   currentSemi=n;selected=new Set();
   const menu=document.getElementById('menuScreen');
   const picker=document.getElementById('pickerScreen');
   document.getElementById('pickerTitle').textContent=(n===1?'1st':'2nd')+' Semi-Final';
-  buildList(n===1?SEMI1:SEMI2);
 
-  // Slide menu out to the left, slide picker in from right
+  // Check if already submitted
+  const submitted = localStorage.getItem('evf_submitted_sf'+n);
+  const savedPicks = JSON.parse(localStorage.getItem('evf_picks_sf'+n)||'[]');
+
+  buildList(n===1?SEMI1:SEMI2, savedPicks);
+
+  // Update bottom buttons based on submission state
+  const saveBtn = document.getElementById('saveShareBtn');
+  const submittedActions = document.getElementById('submittedActions');
+  const hint = document.getElementById('saveHint');
+  if(submitted){
+    saveBtn.style.display='none';
+    submittedActions.style.display='flex';
+    hint.textContent='Your predictions are saved ✅ — download again or see community stats';
+  } else {
+    saveBtn.style.display='block';
+    submittedActions.style.display='none';
+    hint.textContent='Story-ready image for Instagram, X & Facebook';
+  }
+
   menu.classList.add('slide-out');
   menu.classList.remove('active');
-  // Small rAF delay so browser registers the starting transform before transitioning
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
       picker.classList.add('active');
@@ -378,7 +504,7 @@ function goBack(){
   menu.classList.remove('slide-out');
   menu.classList.add('active');
 }
-function buildList(countries){
+function buildList(countries, savedPicks=[]){
   selected.clear();updateCount();
   const list=document.getElementById('countriesList');
   list.innerHTML='';
@@ -392,9 +518,18 @@ function buildList(countries){
         <span class="cartist">${c.artist} · ${c.song}</span>
       </div>
       <div class="check-circle"><svg class="check-icon" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
-    row.addEventListener('click',()=>toggle(i,row));
+    // Restore saved selections
+    if(savedPicks.includes(c.name)){
+      selected.add(i);
+      row.classList.add('sel');
+    }
+    const submitted = localStorage.getItem('evf_submitted_sf'+currentSemi);
+    if(!submitted){
+      row.addEventListener('click',()=>toggle(i,row));
+    }
     list.appendChild(row);
   });
+  updateCount();
 }
 function toggle(i,row){
   if(selected.has(i)){selected.delete(i);row.classList.remove('sel');}
@@ -454,101 +589,104 @@ function generateCard(){
   const tryDraw=()=>{if(++done<2)return;drawFull(ctx,W,H,evfImg,escImg,chosen);};
   evfImg.onload=evfImg.onerror=tryDraw;
   escImg.onload=escImg.onerror=tryDraw;
-  evfImg.src='https://i.imgur.com/aGci65i.png';
+  evfImg.src='https://i.imgur.com/CVmtmbz.png';
   escImg.src='https://i.imgur.com/I0l4jby.png';
 }
 
 function drawFull(ctx,W,H,evfImg,escImg,chosen){
   ctx.save();
-  const PAD=60; // side padding
+  const PAD=60;
 
-  // Logos
-  const evfH=110;
-  try{const ew=evfImg.naturalWidth?evfImg.naturalWidth*(evfH/evfImg.naturalHeight):320;ctx.drawImage(evfImg,W/2-ew/2,70,ew,evfH);}catch(e){}
-  const escH=90;
-  try{const esw=escImg.naturalWidth?escImg.naturalWidth*(escH/escImg.naturalHeight):240;ctx.drawImage(escImg,W/2-esw/2,200,esw,escH);}catch(e){}
+  // ── LOGOS SIDE BY SIDE ──
+  // EVF logo left, ESC logo right, both vertically centered in header
+  const logoH=88;
+  const logoY=56;
+  const centerX=W/2;
+  const gap=30; // gap between logos
 
-  // Title pill
-  const pillY=330;const pillH=90;
+  // EVF on the left half
+  try{
+    const ew=evfImg.naturalWidth?evfImg.naturalWidth*(logoH/evfImg.naturalHeight):330;
+    ctx.drawImage(evfImg, centerX - gap/2 - ew, logoY, ew, logoH);
+  }catch(e){}
+  // ESC on the right half
+  try{
+    const esw=escImg.naturalWidth?escImg.naturalWidth*(logoH/escImg.naturalHeight):220;
+    ctx.drawImage(escImg, centerX + gap/2, logoY, esw, logoH);
+  }catch(e){}
+
+  // Thin divider line between logos
+  ctx.fillStyle='rgba(255,255,255,0.15)';
+  ctx.fillRect(centerX-1, logoY+10, 2, logoH-20);
+
+  // ── TITLE PILL ──
+  const pillY=168; const pillH=88;
   const btnG=ctx.createLinearGradient(PAD,0,W-PAD,0);
   btnG.addColorStop(0,'#ff03ff');btnG.addColorStop(1,'#6c00ff');
-  ctx.fillStyle=btnG;rr(ctx,PAD,pillY,W-PAD*2,pillH,45);ctx.fill();
-  ctx.fillStyle='#fff';ctx.font='bold 44px Montserrat,Arial,sans-serif';
-  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle=btnG; rr(ctx,PAD,pillY,W-PAD*2,pillH,44); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 44px Montserrat,Arial,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText((currentSemi===1?'1ST':'2ND')+' SEMI-FINAL QUALIFIERS',W/2,pillY+pillH/2);
 
-  // Dynamic row height based on count — fit within canvas
-  // Available space: from cardY to footer area
-  const cardY=460;
-  const footerH=130; // space at bottom for footer text
-  const headerRowH=52; // "MY PREDICTIONS" label
-  const availH=H-cardY-footerH-headerRowH-40;
-  // Each row needs: country name + artist+song line + spacing
+  // ── CARD ── starts right after pill with small gap
+  const cardY=pillY+pillH+24;
+  const footerH=110;
+  const headerRowH=50;
+  const availH=H-cardY-footerH-headerRowH-32;
   const n=chosen.length;
-  const rowH=Math.min(150,Math.max(100,Math.floor(availH/n)));
-  const cardH=n*rowH+headerRowH+24;
+  const rowH=Math.min(148,Math.max(96,Math.floor(availH/n)));
+  const cardH=n*rowH+headerRowH+20;
 
-  // Card background
   ctx.fillStyle='rgba(255,255,255,0.05)';
-  ctx.strokeStyle='rgba(255,3,255,0.2)';ctx.lineWidth=2;
-  rr(ctx,PAD,cardY,W-PAD*2,cardH,24);ctx.fill();ctx.stroke();
+  ctx.strokeStyle='rgba(255,3,255,0.2)'; ctx.lineWidth=2;
+  rr(ctx,PAD,cardY,W-PAD*2,cardH,24); ctx.fill(); ctx.stroke();
 
   // Card label
   ctx.fillStyle='rgba(255,255,255,0.35)';
   ctx.font='700 26px Montserrat,Arial,sans-serif';
-  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
   ctx.fillText('MY PREDICTIONS ('+n+'/10)',PAD+40,cardY+headerRowH);
 
   // Rows
-  const listY=cardY+headerRowH+16;
-  const innerW=W-PAD*2-20; // card inner width
+  const listY=cardY+headerRowH+14;
 
   chosen.forEach((c,i)=>{
     const ry=listY+i*rowH;
     const rowCenterY=ry+rowH/2;
 
-    // Alternating row background
     if(i%2===0){
       ctx.fillStyle='rgba(255,255,255,0.04)';
-      rr(ctx,PAD+10,ry+4,W-PAD*2-20,rowH-8,12);ctx.fill();
+      rr(ctx,PAD+10,ry+4,W-PAD*2-20,rowH-8,12); ctx.fill();
     }
 
     // Index number
     ctx.fillStyle='#ff03ff';
     ctx.font=`bold ${Math.round(rowH*0.24)}px Montserrat,Arial,sans-serif`;
-    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
     ctx.fillText((i+1)+'.',PAD+24,rowCenterY);
 
-    // Flag circle
+    // Flag
     const flagSize=Math.round(rowH*0.52);
     const flagX=PAD+80;
     const flagY=rowCenterY-flagSize/2;
     ctx.save();
-    ctx.beginPath();ctx.arc(flagX+flagSize/2,rowCenterY,flagSize/2,0,Math.PI*2);ctx.clip();
-    // Flag image
+    ctx.beginPath(); ctx.arc(flagX+flagSize/2,rowCenterY,flagSize/2,0,Math.PI*2); ctx.clip();
     const flagImg=flagCache[c.cc];
-    if(flagImg&&flagImg.naturalWidth>0){
-      ctx.drawImage(flagImg,flagX,flagY,flagSize,flagSize);
-    } else {
-      ctx.fillStyle='rgba(255,3,255,0.25)';ctx.fill();
-    }
+    if(flagImg&&flagImg.naturalWidth>0){ ctx.drawImage(flagImg,flagX,flagY,flagSize,flagSize); }
+    else{ ctx.fillStyle='rgba(255,3,255,0.25)'; ctx.fill(); }
     ctx.restore();
-    // Flag border
-    ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=2;
-    ctx.beginPath();ctx.arc(flagX+flagSize/2,rowCenterY,flagSize/2,0,Math.PI*2);ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(flagX+flagSize/2,rowCenterY,flagSize/2,0,Math.PI*2); ctx.stroke();
 
-    // Text area
+    // Text
     const textX=flagX+flagSize+22;
-    const textMaxW=W-PAD-textX-70; // leave room for checkmark
-
-    // Country name
+    const textMaxW=W-PAD-textX-70;
     const nameFontSize=Math.round(rowH*0.26);
     ctx.font=`bold ${nameFontSize}px Montserrat,Arial,sans-serif`;
-    ctx.fillStyle='#fff';ctx.textAlign='left';
+    ctx.fillStyle='#fff'; ctx.textAlign='left';
     const nameY=rowH>=130?rowCenterY-nameFontSize*0.55:rowCenterY-nameFontSize*0.3;
     ctx.fillText(truncateText(ctx,c.name,textMaxW),textX,nameY);
 
-    // Artist · Song line
     const subFontSize=Math.round(rowH*0.185);
     ctx.font=`600 ${subFontSize}px Montserrat,Arial,sans-serif`;
     ctx.fillStyle='rgba(255,180,255,0.75)';
@@ -556,31 +694,44 @@ function drawFull(ctx,W,H,evfImg,escImg,chosen){
     const subY=rowH>=130?rowCenterY+subFontSize*0.8:rowCenterY+subFontSize*1.0;
     ctx.fillText(truncateText(ctx,subText,textMaxW),textX,subY);
 
-    // Checkmark circle
+    // Checkmark
     const ckR=Math.round(rowH*0.22);
     const ckX=W-PAD-ckR-20;
-    ctx.fillStyle='#ff03ff';ctx.beginPath();ctx.arc(ckX,rowCenterY,ckR,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#ff03ff'; ctx.beginPath(); ctx.arc(ckX,rowCenterY,ckR,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#fff';
     ctx.font=`bold ${Math.round(ckR*1.3)}px Montserrat,Arial,sans-serif`;
-    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText('✓',ckX,rowCenterY+2);
   });
 
   // Footer
-  const footY=cardY+cardH+36;
-  ctx.fillStyle='rgba(255,255,255,0.1)';ctx.fillRect(PAD,footY,W-PAD*2,1);
+  const footY=cardY+cardH+28;
+  ctx.fillStyle='rgba(255,255,255,0.1)'; ctx.fillRect(PAD,footY,W-PAD*2,1);
   ctx.fillStyle='rgba(255,255,255,0.35)';
-  ctx.font='700 28px Montserrat,Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('STAY UPDATED @ EUROVISIONFUN.COM',W/2,footY+50);
-  ctx.fillStyle='rgba(255,255,255,0.18)';ctx.font='500 22px Montserrat,Arial,sans-serif';
-  ctx.fillText('Eurovision Song Contest 2026 · Vienna',W/2,footY+88);
+  ctx.font='700 28px Montserrat,Arial,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('STAY UPDATED @ EUROVISIONFUN.COM',W/2,footY+44);
+  ctx.fillStyle='rgba(255,255,255,0.18)'; ctx.font='500 22px Montserrat,Arial,sans-serif';
+  ctx.fillText('Eurovision Song Contest 2026 · Vienna',W/2,footY+80);
   ctx.restore();
+
+  // Submit to Supabase
+  submitToSupabase(currentSemi, chosen);
 
   // Always show modal — works on all browsers including Instagram/TikTok in-app
   setTimeout(()=>{
     try{
       const dataUrl=document.getElementById('exportCanvas').toDataURL('image/png');
       document.getElementById('saveModalImg').src=dataUrl;
+      // Show saved confirmation message
+      const savedBadge = document.getElementById('saveModalSaved');
+      savedBadge.style.display = 'block';
+      // Update picker buttons too if picker was open
+      const saveBtn = document.getElementById('saveShareBtn');
+      const submittedActions = document.getElementById('submittedActions');
+      const hint = document.getElementById('saveHint');
+      if(saveBtn) saveBtn.style.display='none';
+      if(submittedActions) submittedActions.style.display='flex';
+      if(hint) hint.textContent='Your predictions are saved ✅ — download again or see community stats';
       document.getElementById('saveModal').classList.add('open');
     }catch(e){showToast('Something went wrong. Try again!');}
   },200);
@@ -598,6 +749,406 @@ function preloadFlags(){
   });
 }
 preloadFlags();
+updateMenuButtons();
+
+/* ── SUPABASE INTEGRATION ── */
+const SUPABASE_URL = 'https://ihsejygibhnwmbubyzdi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imloc2VqeWdpYmhud21idWJ5emRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDg3NjEsImV4cCI6MjA5MzIyNDc2MX0.8XEncQSf-r27ahNj9pYywmVK5gKNjnnLLyUrMYfXEFE';
+
+function submitToSupabase(semi, countries) {
+  let deviceId = localStorage.getItem('evf_device_id');
+  if (!deviceId) {
+    deviceId = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('evf_device_id', deviceId);
+  }
+
+  const submitKey = 'evf_submitted_sf' + semi;
+  if (localStorage.getItem(submitKey)) return;
+
+  // Save picks locally
+  localStorage.setItem('evf_picks_sf' + semi, JSON.stringify(countries.map(c => c.name)));
+  localStorage.setItem(submitKey, '1');
+
+  fetch(SUPABASE_URL + '/rest/v1/predictions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({
+      semi: semi,
+      countries: countries.map(c => c.name).join(','),
+      device_id: deviceId
+    })
+  }).catch(() => {
+    localStorage.removeItem(submitKey);
+  });
+}
+
+async function fetchStats(semi) {
+  const res = await fetch(
+    SUPABASE_URL + '/rest/v1/predictions?select=countries&semi=eq.' + semi,
+    {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      }
+    }
+  );
+  const rows = await res.json();
+  const counts = {};
+  const total = rows.length;
+  rows.forEach(row => {
+    (row.countries || '').split(',').forEach(c => {
+      const name = c.trim();
+      if (name) counts[name] = (counts[name] || 0) + 1;
+    });
+  });
+  return { counts, total };
+}
+
+function generateCommunityCard() {
+  const countries = currentSemi === 1 ? SEMI1 : SEMI2;
+  // Get current sorted stats from the DOM
+  const statsBody = document.getElementById('statsBody');
+  const statRows = statsBody.querySelectorAll('.stats-row');
+  if (!statRows.length) { showToast('No data to share yet!'); return; }
+
+  // Re-fetch fresh data and draw
+  showToast('Creating community image…');
+  fetchStats(currentSemi).then(data => {
+    const { counts = {}, total = 0 } = data;
+    const sorted = [...countries].sort((a,b) => (counts[b.name]||0) - (counts[a.name]||0));
+    const top10 = sorted.slice(0, 10);
+    drawCommunityCanvas(top10, counts, total);
+  }).catch(() => showToast('Could not load data. Try again.'));
+}
+
+function drawCommunityCanvas(top10, counts, total) {
+  const W = 1080, H = 1920;
+  const canvas = document.getElementById('exportCanvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // Deep dark background
+  ctx.fillStyle = '#06000f'; ctx.fillRect(0, 0, W, H);
+
+  // Diagonal colour bands
+  const band1 = ctx.createLinearGradient(0, 0, W, H*0.55);
+  band1.addColorStop(0, 'rgba(120,0,220,0.35)');
+  band1.addColorStop(1, 'transparent');
+  ctx.fillStyle = band1; ctx.fillRect(0, 0, W, H);
+
+  const band2 = ctx.createLinearGradient(W, H, 0, H*0.5);
+  band2.addColorStop(0, 'rgba(255,3,255,0.18)');
+  band2.addColorStop(1, 'transparent');
+  ctx.fillStyle = band2; ctx.fillRect(0, 0, W, H);
+
+  // Glow orbs
+  [[W*0.15,H*0.08,500,'rgba(140,0,255,0.22)'],[W*0.9,H*0.45,400,'rgba(255,3,255,0.14)'],[W*0.5,H*0.95,600,'rgba(100,0,200,0.18)']].forEach(([cx,cy,r,col])=>{
+    const rg=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+    rg.addColorStop(0,col);rg.addColorStop(1,'transparent');
+    ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
+  });
+
+  const evfImg=new Image(), escImg=new Image();
+  evfImg.crossOrigin='anonymous'; escImg.crossOrigin='anonymous';
+  let done=0;
+  const tryDraw=()=>{
+    if(++done<2)return;
+    const PAD=56;
+    ctx.save();
+
+    // ── LOGOS SIDE BY SIDE ──
+    const logoH=80, logoY=50, centerX=W/2, gap=28;
+    try{
+      const ew=evfImg.naturalWidth>0?evfImg.naturalWidth*(logoH/evfImg.naturalHeight):300;
+      ctx.drawImage(evfImg, centerX-gap/2-ew, logoY, ew, logoH);
+    }catch(e){}
+    try{
+      const esw=escImg.naturalWidth>0?escImg.naturalWidth*(logoH/escImg.naturalHeight):200;
+      ctx.drawImage(escImg, centerX+gap/2, logoY, esw, logoH);
+    }catch(e){}
+    ctx.fillStyle='rgba(255,255,255,0.15)';
+    ctx.fillRect(centerX-1, logoY+10, 2, logoH-20);
+
+    // "COMMUNITY VOTE" label
+    ctx.fillStyle='rgba(168,85,247,0.9)';
+    ctx.font='800 26px Montserrat,Arial,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('▸ COMMUNITY VOTE ◂', W/2, 178);
+
+    // Big title block
+    ctx.fillStyle='#fff';
+    ctx.font='900 72px Montserrat,Arial,sans-serif';
+    ctx.fillText('TOP 10', W/2, 248);
+
+    ctx.font='900 40px Montserrat,Arial,sans-serif';
+    ctx.fillStyle='rgba(255,255,255,0.55)';
+    ctx.fillText('PREDICTED QUALIFIERS', W/2, 302);
+
+    // Semi label pill
+    const semiLabel=(currentSemi===1?'1ST':'2ND')+' SEMI-FINAL';
+    const pillW=340, pillH=52, pillX=W/2-pillW/2, pillY=332;
+    const pillG=ctx.createLinearGradient(pillX,0,pillX+pillW,0);
+    pillG.addColorStop(0,'#7c00ff');pillG.addColorStop(1,'#ff03ff');
+    ctx.fillStyle=pillG; rr(ctx,pillX,pillY,pillW,pillH,26); ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='800 24px Montserrat,Arial,sans-serif';
+    ctx.fillText(semiLabel, W/2, pillY+pillH/2);
+
+    // Submission count
+    ctx.fillStyle='rgba(255,255,255,0.35)';
+    ctx.font='600 24px Montserrat,Arial,sans-serif';
+    ctx.fillText(`Based on ${total.toLocaleString()} prediction${total!==1?'s':''}`, W/2, 424);
+
+    // Divider
+    const divG=ctx.createLinearGradient(PAD,0,W-PAD,0);
+    divG.addColorStop(0,'transparent');
+    divG.addColorStop(0.3,'rgba(168,85,247,0.6)');
+    divG.addColorStop(0.7,'rgba(255,3,255,0.6)');
+    divG.addColorStop(1,'transparent');
+    ctx.fillStyle=divG; ctx.fillRect(PAD,448,W-PAD*2,2);
+
+    // ── COUNTRIES LIST ── fills remaining space, no footer
+    const listTop=462;
+    const listBottom=H-40;
+    const availH=listBottom-listTop;
+    const rowH=Math.floor(availH/10);
+    const maxCount=counts[top10[0]?.name]||1;
+
+    // Draw medals as colored circles with text (no emoji rendering issues)
+    const medalColors=[['#FFD700','#B8860B'],['#C0C0C0','#808080'],['#CD7F32','#8B4513']];
+
+    top10.forEach((c,i)=>{
+      const ry=listTop+i*rowH;
+      const rowCY=ry+rowH/2;
+      const cnt=counts[c.name]||0;
+      const pct=Math.round((cnt/total)*100);
+      const barFill=cnt/maxCount;
+
+      if(i%2===0){
+        ctx.fillStyle='rgba(255,255,255,0.03)';
+        rr(ctx,PAD,ry+3,W-PAD*2,rowH-6,10); ctx.fill();
+      }
+
+      // Rank — colored circle for top 3, number for rest
+      const rankCX=PAD+36, rankR=Math.round(rowH*0.28);
+      if(i<3){
+        const mc=medalColors[i];
+        const mg=ctx.createRadialGradient(rankCX,rowCY,0,rankCX,rowCY,rankR);
+        mg.addColorStop(0,mc[0]); mg.addColorStop(1,mc[1]);
+        ctx.fillStyle=mg; ctx.beginPath(); ctx.arc(rankCX,rowCY,rankR,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#fff';
+        ctx.font=`900 ${Math.round(rankR*1.1)}px Montserrat,Arial,sans-serif`;
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(i+1,rankCX,rowCY+1);
+      } else {
+        ctx.fillStyle='rgba(255,255,255,0.22)';
+        ctx.font=`800 ${Math.round(rowH*0.28)}px Montserrat,Arial,sans-serif`;
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(i+1,rankCX,rowCY);
+      }
+
+      // Flag
+      const flagR=Math.round(rowH*0.32);
+      const flagCX=PAD+rankR*2+flagR+22;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(flagCX,rowCY,flagR,0,Math.PI*2); ctx.clip();
+      const fi=flagCache[c.cc];
+      if(fi&&fi.naturalWidth>0) ctx.drawImage(fi,flagCX-flagR,rowCY-flagR,flagR*2,flagR*2);
+      else{ctx.fillStyle='rgba(168,85,247,0.4)';ctx.fill();}
+      ctx.restore();
+      if(i<3){
+        const rg=ctx.createLinearGradient(flagCX-flagR,rowCY-flagR,flagCX+flagR,rowCY+flagR);
+        rg.addColorStop(0,medalColors[i][0]); rg.addColorStop(1,medalColors[i][1]);
+        ctx.strokeStyle=rg;
+      } else { ctx.strokeStyle='rgba(255,255,255,0.15)'; }
+      ctx.lineWidth=3;
+      ctx.beginPath(); ctx.arc(flagCX,rowCY,flagR,0,Math.PI*2); ctx.stroke();
+
+      // Text
+      const textX=flagCX+flagR+18;
+      const pctW=118;
+      const textMaxW=W-PAD-textX-pctW-10;
+      const nameFontSize=Math.round(rowH*0.29);
+      ctx.fillStyle='#fff';
+      ctx.font=`800 ${nameFontSize}px Montserrat,Arial,sans-serif`;
+      ctx.textAlign='left'; ctx.textBaseline='middle';
+      const nameY=rowH>=110?rowCY-nameFontSize*0.42:rowCY;
+      ctx.fillText(truncateText(ctx,c.name,textMaxW),textX,nameY);
+
+      // Bar
+      if(rowH>=100){
+        const barY=nameY+nameFontSize*0.78;
+        const barH2=Math.max(8,Math.round(rowH*0.1));
+        ctx.fillStyle='rgba(255,255,255,0.08)';
+        rr(ctx,textX,barY,textMaxW,barH2,barH2/2); ctx.fill();
+        const fillW=Math.max(barH2,textMaxW*barFill);
+        const bG=ctx.createLinearGradient(textX,0,textX+fillW,0);
+        bG.addColorStop(0,'#7c00ff'); bG.addColorStop(1,'#ff03ff');
+        ctx.fillStyle=bG; rr(ctx,textX,barY,fillW,barH2,barH2/2); ctx.fill();
+      }
+
+      // Percent
+      const pctColor=i<3?'#ff03ff':'rgba(255,255,255,0.55)';
+      ctx.fillStyle=pctColor;
+      ctx.font=`900 ${Math.round(rowH*0.3)}px Montserrat,Arial,sans-serif`;
+      ctx.textAlign='right'; ctx.textBaseline='middle';
+      ctx.fillText(pct+'%',W-PAD-6,rowCY);
+    });
+
+    ctx.restore();
+
+    setTimeout(()=>{
+      try{
+        const dataUrl=document.getElementById('exportCanvas').toDataURL('image/png');
+        document.getElementById('communityModalImg').src=dataUrl;
+        document.getElementById('communityModal').classList.add('open');
+      }catch(e){showToast('Something went wrong!');}
+    },200);
+  };
+
+  evfImg.onload=evfImg.onerror=tryDraw;
+  escImg.onload=escImg.onerror=tryDraw;
+  evfImg.src='https://i.imgur.com/CVmtmbz.png';
+  escImg.src='https://i.imgur.com/I0l4jby.png';
+}
+
+function closeSaveModal() {
+  document.getElementById('saveModal').classList.remove('open');
+}
+
+function openStats() {
+  const picker = document.getElementById('pickerScreen');
+  const stats = document.getElementById('statsScreen');
+  document.getElementById('statsTitle').textContent = (currentSemi === 1 ? '1st' : '2nd') + ' Semi-Final Stats';
+  document.getElementById('statsSubtitle').textContent = 'Based on all community predictions';
+  document.getElementById('statsBody').innerHTML = '<div class="stats-loading"><div class="stats-spinner"></div>Loading data…</div>';
+
+  picker.classList.add('slide-out');
+  picker.classList.remove('active');
+  requestAnimationFrame(() => requestAnimationFrame(() => stats.classList.add('active')));
+
+  fetchStats(currentSemi)
+    .then(data => renderStats(data))
+    .catch(() => {
+      document.getElementById('statsBody').innerHTML = '<div class="stats-loading">Could not load data.<br>Try again later.</div>';
+    });
+}
+
+function openStatsFromMenu(n) {
+  currentSemi = n;
+  const menu = document.getElementById('menuScreen');
+  const stats = document.getElementById('statsScreen');
+  document.getElementById('statsTitle').textContent = (n === 1 ? '1st' : '2nd') + ' Semi-Final Stats';
+  document.getElementById('statsSubtitle').textContent = 'Based on all community predictions';
+  document.getElementById('statsBody').innerHTML = '<div class="stats-loading"><div class="stats-spinner"></div>Loading data…</div>';
+
+  menu.classList.add('slide-out');
+  menu.classList.remove('active');
+  requestAnimationFrame(() => requestAnimationFrame(() => stats.classList.add('active')));
+
+  fetchStats(n)
+    .then(data => renderStats(data))
+    .catch(() => {
+      document.getElementById('statsBody').innerHTML = '<div class="stats-loading">Could not load data.<br>Try again later.</div>';
+    });
+}
+
+function goBackFromStats() {
+  const menu = document.getElementById('menuScreen');
+  const picker = document.getElementById('pickerScreen');
+  const stats = document.getElementById('statsScreen');
+  stats.classList.remove('active');
+  // If picker is slide-out we came from picker, else from menu
+  if(picker.classList.contains('slide-out')){
+    picker.classList.remove('slide-out');
+    picker.classList.add('active');
+  } else {
+    menu.classList.remove('slide-out');
+    menu.classList.add('active');
+  }
+}
+
+function renderStats(data) {
+  const countries = currentSemi === 1 ? SEMI1 : SEMI2;
+  const { counts = {}, total = 0 } = data;
+
+  if (total === 0) {
+    document.getElementById('statsBody').innerHTML = '<div class="stats-loading">No predictions yet.<br>Be the first! 🎉</div>';
+    return;
+  }
+
+  // Sort countries by pick count desc
+  const sorted = [...countries].sort((a, b) => (counts[b.name] || 0) - (counts[a.name] || 0));
+  const max = counts[sorted[0].name] || 1;
+
+  // Agreement score — compare user's picks vs community top 10
+  const myPicks = JSON.parse(localStorage.getItem('evf_picks_sf' + currentSemi) || '[]');
+  const communityTop10 = sorted.slice(0, 10).map(c => c.name);
+  let agreementHtml = '';
+  if (myPicks.length > 0) {
+    const matches = myPicks.filter(p => communityTop10.includes(p)).length;
+    const agreePct = Math.round((matches / 10) * 100);
+    const emoji = agreePct >= 80 ? '🔥' : agreePct >= 60 ? '👏' : agreePct >= 40 ? '🤔' : '😅';
+    const label = agreePct >= 80 ? 'You\'re aligned with the crowd!' : agreePct >= 60 ? 'Pretty close to the community!' : agreePct >= 40 ? 'You see it differently' : 'Bold & unique predictions!';
+    agreementHtml = `
+      <div class="agreement-card">
+        <div class="agreement-top">
+          <span class="agreement-emoji">${emoji}</span>
+          <div>
+            <div class="agreement-title">Your Agreement Score</div>
+            <div class="agreement-label">${label}</div>
+          </div>
+          <div class="agreement-pct">${agreePct}%</div>
+        </div>
+        <div class="agreement-bar-wrap">
+          <div class="agreement-bar" data-w="${agreePct}"></div>
+        </div>
+        <div class="agreement-sub">${matches} of your ${myPicks.length} picks match the community's top 10</div>
+      </div>`;
+  }
+
+  let html = agreementHtml + `<div class="stats-total">${total} prediction${total !== 1 ? 's' : ''} submitted</div>`;
+
+  sorted.forEach((c, i) => {
+    const cnt = counts[c.name] || 0;
+    const pct = Math.round((cnt / total) * 100);
+    const barW = Math.round((cnt / max) * 100);
+    const isMyPick = myPicks.includes(c.name);
+    const barStyle = i < 10
+      ? 'background:linear-gradient(90deg,#ff03ff,#8800ff);'
+      : 'background:rgba(255,255,255,0.15);';
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
+    const myDot = isMyPick ? '<span class="my-pick-dot" title="Your pick">★</span>' : '';
+
+    html += `
+      <div class="stats-row">
+        <div class="stats-flag"><img src="${flagUrl(c.cc)}" alt="${c.name}"></div>
+        <div class="stats-name">${medal}${c.name}${myDot}</div>
+        <div class="stats-bar-wrap"><div class="stats-bar" style="width:0%;${barStyle}" data-w="${barW}"></div></div>
+        <div class="stats-pct">${pct}%</div>
+      </div>`;
+  });
+
+  // Legend if user has picks
+  if (myPicks.length > 0) {
+    html += `<div class="stats-legend">★ Your pick</div>`;
+  }
+
+  document.getElementById('statsBody').innerHTML = html;
+
+  // Animate bars in
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll('.stats-bar[data-w]').forEach(bar => {
+      bar.style.width = bar.dataset.w + '%';
+    });
+    const ab = document.querySelector('.agreement-bar[data-w]');
+    if (ab) ab.style.width = ab.dataset.w + '%';
+  }));
+}
 </script>
 </body>
 </html>
