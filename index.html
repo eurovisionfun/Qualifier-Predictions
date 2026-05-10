@@ -724,12 +724,14 @@ function generateScoreCard(correct, missed, score) {
 }
 
 
+function goBack(){
   const menu=document.getElementById('menuScreen');
   const picker=document.getElementById('pickerScreen');
   picker.classList.remove('active');
   menu.classList.remove('slide-out');
   menu.classList.add('active');
 }
+
 function buildList(countries, savedPicks=[]){
   selected.clear();updateCount();
   const list=document.getElementById('countriesList');
@@ -1030,7 +1032,7 @@ async function fetchSemiState(semi) {
   } catch(e) { return { locked: false, revealed: false, qualifiers: [] }; }
 }
 
-
+async function fetchStats(semi) {
   const res = await fetch(
     SUPABASE_URL + '/rest/v1/predictions?select=countries&semi=eq.' + semi,
     {
