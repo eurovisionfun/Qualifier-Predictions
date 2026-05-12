@@ -510,36 +510,37 @@ function openSemi(n){
   const savedPicks = JSON.parse(localStorage.getItem('evf_picks_sf'+n)||'[]');
   buildList(n===1?SEMI1:SEMI2, savedPicks);
 
-  // Check time-based lock first (22:00 Athens = 20:00 UTC)
-  const semifinalTime = n===1 ? SF1_TIME : SF2_TIME;
-  const nowPastKickoff = new Date() >= semifinalTime;
-
-  // Fetch Supabase state
+  // Fetch state — revealed always takes priority over locked
   fetchSemiState(n).then(state => {
-    const isLocked = state.locked || nowPastKickoff;
     const isRevealed = state.revealed && state.qualifiers.length > 0;
+    const isLocked = !isRevealed && (state.locked || new Date() >= (n===1 ? SF1_TIME : SF2_TIME));
     const saveBtn = document.getElementById('saveShareBtn');
     const submittedActions = document.getElementById('submittedActions');
     const hint = document.getElementById('saveHint');
 
     if (isRevealed && submitted) {
-      // Show score reveal
+      // Results are out + user submitted → show score
       showScoreReveal(savedPicks, state.qualifiers);
       saveBtn.style.display='none';
       submittedActions.style.display='none';
       hint.textContent='';
     } else if (isRevealed && !submitted) {
-      // Revealed but didn't submit — show locked
+      // Results are out but user didn't submit → show results only
       showLockedMessage(n, true);
       saveBtn.style.display='none';
       submittedActions.style.display='none';
       hint.textContent='';
     } else if (isLocked && !submitted) {
-      // Locked, no submission
+      // Locked before results, no submission
       showLockedMessage(n, false);
       saveBtn.style.display='none';
       submittedActions.style.display='none';
       hint.textContent='';
+    } else if (isLocked && submitted) {
+      // Locked but user submitted → show download + stats while waiting
+      saveBtn.style.display='none';
+      submittedActions.style.display='flex';
+      hint.textContent='Results coming soon — check back after the show!';
     } else if (submitted) {
       saveBtn.style.display='none';
       submittedActions.style.display='flex';
