@@ -396,6 +396,12 @@ html,body{
 const SF1_TIME = new Date('2026-05-12T21:00:00+02:00');
 const SF2_TIME = new Date('2026-05-14T21:00:00+02:00');
 
+// Hardcoded results — set after each semi-final
+const SF1_QUALIFIERS = ['Greece','Finland','Belgium','Sweden','Moldova','Israel','Serbia','Croatia','Lithuania','Poland'];
+const SF2_QUALIFIERS = []; // fill after SF2
+const SF1_REVEALED = true;
+const SF2_REVEALED = false;
+
 const SEMI1=[
   {name:'Moldova',  cc:'md',artist:'Satoshi',             song:'Viva, Moldova!'},
   {name:'Sweden',   cc:'se',artist:'FELICIA',             song:'My System'},
@@ -1019,20 +1025,27 @@ function submitToSupabase(semi, countries) {
 }
 
 async function fetchSemiState(semi) {
+  const hardcodedResults = semi === 1 ? SF1_QUALIFIERS : SF2_QUALIFIERS;
+  const isRevealed = semi === 1 ? SF1_REVEALED : SF2_REVEALED;
+
   try {
-    const [settingsRes, resultsRes] = await Promise.all([
-      fetch(SUPABASE_URL + '/rest/v1/settings?select=key,value', { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }),
-      fetch(SUPABASE_URL + '/rest/v1/results?select=country&semi=eq.' + semi, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } })
-    ]);
+    const settingsRes = await fetch(SUPABASE_URL + '/rest/v1/settings?select=key,value', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
     const settings = await settingsRes.json();
-    const results = await resultsRes.json();
     const get = key => (settings.find(s => s.key === key) || {}).value === 'true';
     return {
-      locked: get('sf' + semi + '_locked'),
-      revealed: get('sf' + semi + '_revealed'),
-      qualifiers: results.map(r => r.country)
+      locked: get('sf' + semi + '_locked') || new Date() >= (semi === 1 ? SF1_TIME : SF2_TIME),
+      revealed: isRevealed,
+      qualifiers: hardcodedResults
     };
-  } catch(e) { return { locked: false, revealed: false, qualifiers: [] }; }
+  } catch(e) {
+    return {
+      locked: new Date() >= (semi === 1 ? SF1_TIME : SF2_TIME),
+      revealed: isRevealed,
+      qualifiers: hardcodedResults
+    };
+  }
 }
 
 async function fetchStats(semi) {
