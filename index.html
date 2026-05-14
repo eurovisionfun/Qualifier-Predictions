@@ -523,8 +523,7 @@ function openSemi(n){
       // Results are out + user submitted → show score
       showScoreReveal(savedPicks, state.qualifiers, true);
       saveBtn.style.display='none';
-      submittedActions.style.display='none';
-      hint.textContent='';
+      // submittedActions handled inside showScoreReveal
     } else if (isRevealed && !submitted) {
       // Results are out but user didn't submit → show closed message
       showLockedMessage(n, 'missed');
@@ -538,11 +537,10 @@ function openSemi(n){
       submittedActions.style.display='none';
       hint.textContent='';
     } else if (isLocked && submitted) {
-      // Locked but user submitted → show download + stats only (no score yet)
+      // Locked but user submitted → show predictions view, no score yet
       showScoreReveal(savedPicks, state.qualifiers, false);
       saveBtn.style.display='none';
-      submittedActions.style.display='none';
-      hint.textContent='';
+      // submittedActions handled inside showScoreReveal
     } else if (submitted) {
       saveBtn.style.display='none';
       submittedActions.style.display='flex';
