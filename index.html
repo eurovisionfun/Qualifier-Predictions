@@ -586,12 +586,16 @@ function showLockedMessage(semi, type) {
     </div>`;
 }
 
+let _scoreData = null; // store score data globally to avoid HTML escaping issues
+
 function showScoreReveal(myPicks, qualifiers, canShare) {
   const correct = myPicks.filter(p => qualifiers.includes(p));
   const missed = qualifiers.filter(q => !myPicks.includes(q));
-  const wrong = myPicks.filter(p => !qualifiers.includes(p));
   const score = correct.length;
   const emoji = score===10?'🏆':score>=8?'🔥':score>=6?'👏':score>=4?'🎯':'😅';
+
+  // Store globally so onclick can access without JSON serialization issues
+  _scoreData = { correct, missed, score };
 
   const list = document.getElementById('countriesList');
   list.innerHTML = `
@@ -615,20 +619,24 @@ function showScoreReveal(myPicks, qualifiers, canShare) {
   const hint = document.getElementById('saveHint');
 
   if (canShare) {
+    // Results revealed — show score story button
     submittedActions.innerHTML=`
-      <button class="save-btn" onclick="generateScoreCard(${JSON.stringify(correct)},${JSON.stringify(missed)},${score})">🏆 Share My Score</button>
+      <button class="save-btn" onclick="generateScoreCard()">🏆 Share My Score</button>
       <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
     hint.textContent='Share your score with your friends!';
   } else {
+    // Locked but results not yet — show predictions story button
     submittedActions.innerHTML=`
-      <button class="save-btn" onclick="generateCard()">📷 Download My Predictions</button>
+      <button class="save-btn" onclick="generateCard()">📷 Share My Predictions</button>
       <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
     hint.textContent='Results coming soon — check back after the show!';
   }
   submittedActions.style.display='flex';
 }
 
-function generateScoreCard(correct, missed, score) {
+function generateScoreCard() {
+  if (!_scoreData) { showToast('No score data available!'); return; }
+  const { correct, missed, score } = _scoreData;
   showToast('Creating score card…');
   const W=1080, H=1920;
   const canvas=document.getElementById('exportCanvas');
