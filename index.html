@@ -880,10 +880,21 @@ function truncateText(ctx,text,maxW){
 }
 
 function generateCard(){
-  if(selected.size===0){showToast('Select at least one country!');return;}
+  const alreadySubmitted = localStorage.getItem('evf_submitted_sf'+currentSemi);
+  const savedPicks = JSON.parse(localStorage.getItem('evf_picks_sf'+currentSemi)||'[]');
+
+  // Use saved picks if already submitted and nothing currently selected
+  let chosen;
+  if(selected.size===0 && alreadySubmitted && savedPicks.length>0){
+    const countries=currentSemi===1?SEMI1:SEMI2;
+    chosen=savedPicks.map(name=>countries.find(c=>c.name===name)).filter(Boolean);
+  } else if(selected.size===0){
+    showToast('Select at least one country!');return;
+  } else {
+    const countries=currentSemi===1?SEMI1:SEMI2;
+    chosen=Array.from(selected).sort((a,b)=>a-b).map(i=>countries[i]);
+  }
   showToast('Creating image…');
-  const countries=currentSemi===1?SEMI1:SEMI2;
-  const chosen=Array.from(selected).sort((a,b)=>a-b).map(i=>countries[i]);
   const W=1080,H=1920;
   const canvas=document.getElementById('exportCanvas');
   canvas.width=W;canvas.height=H;
@@ -1039,8 +1050,13 @@ function drawFull(ctx,W,H,evfImg,escImg,chosen){
       const submittedActions = document.getElementById('submittedActions');
       const hint = document.getElementById('saveHint');
       if(saveBtn) saveBtn.style.display='none';
-      if(submittedActions) submittedActions.style.display='flex';
-      if(hint) hint.textContent='Your predictions are saved ✅ — download again or see community stats';
+      if(submittedActions){
+        submittedActions.innerHTML=`
+          <button class="save-btn" onclick="generateCard()">📷 Download My Predictions</button>
+          <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
+        submittedActions.style.display='flex';
+      }
+      if(hint) hint.textContent='Your predictions are saved ✅';
       document.getElementById('saveModal').classList.add('open');
     }catch(e){showToast('Something went wrong. Try again!');}
   },200);
