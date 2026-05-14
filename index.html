@@ -521,27 +521,28 @@ function openSemi(n){
 
     if (isRevealed && submitted) {
       // Results are out + user submitted → show score
-      showScoreReveal(savedPicks, state.qualifiers);
+      showScoreReveal(savedPicks, state.qualifiers, true);
       saveBtn.style.display='none';
       submittedActions.style.display='none';
       hint.textContent='';
     } else if (isRevealed && !submitted) {
-      // Results are out but user didn't submit → show results only
-      showLockedMessage(n, true);
+      // Results are out but user didn't submit → show closed message
+      showLockedMessage(n, 'missed');
       saveBtn.style.display='none';
       submittedActions.style.display='none';
       hint.textContent='';
     } else if (isLocked && !submitted) {
       // Locked before results, no submission
-      showLockedMessage(n, false);
+      showLockedMessage(n, 'locked');
       saveBtn.style.display='none';
       submittedActions.style.display='none';
       hint.textContent='';
     } else if (isLocked && submitted) {
-      // Locked but user submitted → show download + stats while waiting
+      // Locked but user submitted → show download + stats only (no score yet)
+      showScoreReveal(savedPicks, state.qualifiers, false);
       saveBtn.style.display='none';
-      submittedActions.style.display='flex';
-      hint.textContent='Results coming soon — check back after the show!';
+      submittedActions.style.display='none';
+      hint.textContent='';
     } else if (submitted) {
       saveBtn.style.display='none';
       submittedActions.style.display='flex';
@@ -553,31 +554,41 @@ function openSemi(n){
     }
   });
 }
-function showLockedMessage(semi, resultsLater) {
+function showLockedMessage(semi, type) {
   const list = document.getElementById('countriesList');
   const showDay = semi === 1 ? 'Tuesday 12 May' : 'Thursday 14 May';
   const duringShow = semi === 2 && new Date() >= SF2_TIME && new Date() < SF2_END_TIME;
+
+  let icon = '🔒';
+  let title = '';
+  let msg = '';
+
+  if (type === 'missed') {
+    // Results are out but user never submitted
+    icon = '📋';
+    title = 'This Semi-Final Has Ended';
+    msg = `The ${semi===1?'1st':'2nd'} Semi-Final (${showDay}) is over and the qualifiers have been announced.<br><br>You didn't submit predictions for this semi-final — head to the <strong>Community Stats</strong> to see how others voted!`;
+  } else if (duringShow) {
+    // SF2 is live right now
+    icon = '🎤';
+    title = 'The Show Is On!';
+    msg = `The ${semi===1?'1st':'2nd'} Semi-Final is live right now! Predictions are closed.<br><br>Come back after the show (around 00:00) to see your score!<br><br>🎥 Watch our <strong>live commentary stream</strong> on YouTube!<br><a class="locked-yt" href="https://www.youtube.com/@eurovisionfun_" target="_blank">▶ youtube.com/@eurovisionfun_</a>`;
+  } else {
+    // Locked, results not yet available
+    title = 'Predictions Closed';
+    msg = `Predictions for the ${semi===1?'1st':'2nd'} Semi-Final (${showDay}) are now closed.<br><br>🎥 Watch the show &amp; join our <strong>live commentary stream</strong> on YouTube tonight — then come back after 00:00 to see your score!<br><br><a class="locked-yt" href="https://www.youtube.com/@eurovisionfun_" target="_blank">▶ youtube.com/@eurovisionfun_</a>`;
+  }
+
   list.innerHTML = `
     <div class="locked-screen">
-      <div class="locked-icon">🔒</div>
-      <div class="locked-title">Predictions Closed</div>
-      <div class="locked-msg">${resultsLater
-        ? `The results are being processed.<br>Come back soon to see your score!<br><br>
-           🎥 In the meantime, join our <strong>live reaction stream</strong> on YouTube!<br>
-           <a class="locked-yt" href="https://www.youtube.com/@eurovisionfun_" target="_blank">▶ youtube.com/@eurovisionfun_</a>`
-        : duringShow
-        ? `The ${semi===1?'1st':'2nd'} Semi-Final is on right now! 🎤<br><br>
-           Come back after the show (around 00:00) to see your score!<br><br>
-           🎥 Watch our <strong>live commentary stream</strong> on YouTube!<br>
-           <a class="locked-yt" href="https://www.youtube.com/@eurovisionfun_" target="_blank">▶ youtube.com/@eurovisionfun_</a>`
-        : `Predictions for the ${semi===1?'1st':'2nd'} Semi-Final (${showDay}) are now closed.<br><br>
-           🎥 Watch the show &amp; join our <strong>live commentary stream</strong> on YouTube tonight — then come back after 00:00 to see your score!<br><br>
-           <a class="locked-yt" href="https://www.youtube.com/@eurovisionfun_" target="_blank">▶ youtube.com/@eurovisionfun_</a>`
-      }</div>
+      <div class="locked-icon">${icon}</div>
+      <div class="locked-title">${title}</div>
+      <div class="locked-msg">${msg}</div>
+      ${type === 'missed' ? `<button class="save-btn stats-btn-picker" style="margin-top:16px;width:80%;" onclick="openStats()">📊 Community Stats</button>` : ''}
     </div>`;
 }
 
-function showScoreReveal(myPicks, qualifiers) {
+function showScoreReveal(myPicks, qualifiers, canShare) {
   const correct = myPicks.filter(p => qualifiers.includes(p));
   const missed = qualifiers.filter(q => !myPicks.includes(q));
   const wrong = myPicks.filter(p => !qualifiers.includes(p));
@@ -602,16 +613,21 @@ function showScoreReveal(myPicks, qualifiers) {
       </div>
     </div>`;
 
-  // Show score share button
-  const saveBtn = document.getElementById('saveShareBtn');
   const submittedActions = document.getElementById('submittedActions');
   const hint = document.getElementById('saveHint');
-  saveBtn.style.display='none';
-  submittedActions.innerHTML=`
-    <button class="save-btn" onclick="generateScoreCard(${JSON.stringify(correct)},${JSON.stringify(missed)},${score})">🏆 Share My Score</button>
-    <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
+
+  if (canShare) {
+    submittedActions.innerHTML=`
+      <button class="save-btn" onclick="generateScoreCard(${JSON.stringify(correct)},${JSON.stringify(missed)},${score})">🏆 Share My Score</button>
+      <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
+    hint.textContent='Share your score with your friends!';
+  } else {
+    submittedActions.innerHTML=`
+      <button class="save-btn" onclick="generateCard()">📷 Download My Predictions</button>
+      <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
+    hint.textContent='Results coming soon — check back after the show!';
+  }
   submittedActions.style.display='flex';
-  hint.textContent='Share your score with your friends!';
 }
 
 function generateScoreCard(correct, missed, score) {
