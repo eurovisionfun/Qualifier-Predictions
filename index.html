@@ -555,6 +555,51 @@ function openSemi(n){
     }
   });
 }
+
+function buildList(countries, savedPicks=[]){
+  selected.clear(); updateCount();
+  const list=document.getElementById('countriesList');
+  list.innerHTML='';
+  countries.forEach((c,i)=>{
+    const row=document.createElement('div');
+    row.className='country-row'; row.id='row_'+i;
+    row.innerHTML=`
+      <div class="flag-box"><img src="${flagUrl(c.cc)}" alt="${c.name}" onerror="this.parentNode.style.background='rgba(255,3,255,0.2)'"></div>
+      <div class="cinfo">
+        <span class="cname">${c.name}</span>
+        <span class="cartist">${c.artist} · ${c.song}</span>
+      </div>
+      <div class="check-circle"><svg class="check-icon" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+    if(savedPicks.includes(c.name)){
+      selected.add(i);
+      row.classList.add('sel');
+    }
+    const submitted = localStorage.getItem('evf_submitted_sf'+currentSemi);
+    if(!submitted){
+      row.addEventListener('click',()=>toggle(i,row));
+    }
+    list.appendChild(row);
+  });
+  updateCount();
+}
+
+function toggle(i,row){
+  if(selected.has(i)){selected.delete(i);row.classList.remove('sel');}
+  else{
+    if(selected.size>=10){showToast('Maximum 10 countries!');return;}
+    selected.add(i);row.classList.add('sel');
+  }
+  updateCount();
+}
+
+function updateCount(){document.getElementById('selCount').textContent=selected.size;}
+
+function showToast(msg){
+  const t=document.getElementById('toastBar');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
 function showLockedMessage(semi, type) {
   const list = document.getElementById('countriesList');
   const showDay = semi === 1 ? 'Tuesday 12 May' : 'Thursday 14 May';
