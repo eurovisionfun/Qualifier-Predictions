@@ -646,6 +646,7 @@ function generateScoreCard() {
   canvas.width=W; canvas.height=H;
   const ctx=canvas.getContext('2d');
 
+  // Background
   const grd=ctx.createLinearGradient(0,0,0,H);
   grd.addColorStop(0,'#06000f');grd.addColorStop(0.5,'#120030');grd.addColorStop(1,'#0d001f');
   ctx.fillStyle=grd; ctx.fillRect(0,0,W,H);
@@ -660,68 +661,80 @@ function generateScoreCard() {
   let done=0;
   const tryDraw=()=>{
     if(++done<2)return;
-    const PAD=60; ctx.save();
+    const PAD=56; ctx.save();
 
-    // Logos side by side (top ~160px free)
-    const logoH=78, logoY=170, centerX=W/2, gap=28;
-    try{const ew=evfImg.naturalWidth>0?evfImg.naturalWidth*(logoH/evfImg.naturalHeight):290;ctx.drawImage(evfImg,centerX-gap/2-ew,logoY,ew,logoH);}catch(e){}
-    try{const esw=escImg.naturalWidth>0?escImg.naturalWidth*(logoH/escImg.naturalHeight):195;ctx.drawImage(escImg,centerX+gap/2,logoY,esw,logoH);}catch(e){}
-    ctx.fillStyle='rgba(255,255,255,0.15)'; ctx.fillRect(centerX-1,logoY+10,2,logoH-18);
+    // ── LAYOUT: calculate everything top-down ──
+    const topFree=160;  // free space at top for IG text
+    const botFree=260;  // free space at bottom
+    const usable=H-topFree-botFree;
 
-    // Semi label
+    // Logos
+    const logoH=76, logoY=topFree, centerX=W/2, gap=26;
+    try{const ew=evfImg.naturalWidth>0?evfImg.naturalWidth*(logoH/evfImg.naturalHeight):285;ctx.drawImage(evfImg,centerX-gap/2-ew,logoY,ew,logoH);}catch(e){}
+    try{const esw=escImg.naturalWidth>0?escImg.naturalWidth*(logoH/escImg.naturalHeight):190;ctx.drawImage(escImg,centerX+gap/2,logoY,esw,logoH);}catch(e){}
+    ctx.fillStyle='rgba(255,255,255,0.14)'; ctx.fillRect(centerX-1,logoY+8,2,logoH-16);
+
+    // Semi label — 20px below logos
+    const labelY=logoY+logoH+36;
     ctx.fillStyle='rgba(168,85,247,0.85)'; ctx.font='800 26px Montserrat,Arial,sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('▸ '+(currentSemi===1?'1ST':'2ND')+' SEMI-FINAL · MY SCORE ◂', W/2, logoY+logoH+44);
+    ctx.fillText('▸ '+(currentSemi===1?'1ST':'2ND')+' SEMI-FINAL · MY SCORE ◂', W/2, labelY);
 
-    // Score circle — compact
-    const circY=logoY+logoH+210, circR=148;
+    // Circle — 52px below label (pushed down vs before)
+    const circY=labelY+52+148; // labelY + gap + radius
+    const circR=148;
     const glowG=ctx.createRadialGradient(W/2,circY,40,W/2,circY,circR*1.8);
     glowG.addColorStop(0,'rgba(255,3,255,0.18)'); glowG.addColorStop(1,'transparent');
     ctx.fillStyle=glowG; ctx.fillRect(0,circY-circR*2,W,circR*4);
-    const circG=ctx.createRadialGradient(W/2,circY,0,W/2,circY,circR);
-    circG.addColorStop(0,'rgba(255,3,255,0.22)'); circG.addColorStop(1,'rgba(80,0,180,0.1)');
-    ctx.fillStyle=circG; ctx.beginPath(); ctx.arc(W/2,circY,circR,0,Math.PI*2); ctx.fill();
+    const circBg=ctx.createRadialGradient(W/2,circY,0,W/2,circY,circR);
+    circBg.addColorStop(0,'rgba(255,3,255,0.22)'); circBg.addColorStop(1,'rgba(80,0,180,0.1)');
+    ctx.fillStyle=circBg; ctx.beginPath(); ctx.arc(W/2,circY,circR,0,Math.PI*2); ctx.fill();
     ctx.save();
     const bG=ctx.createLinearGradient(W/2-circR,circY-circR,W/2+circR,circY+circR);
     bG.addColorStop(0,'#a855f7'); bG.addColorStop(1,'#ff03ff');
     ctx.strokeStyle=bG; ctx.lineWidth=5;
     ctx.beginPath(); ctx.arc(W/2,circY,circR,0,Math.PI*2); ctx.stroke();
     ctx.restore();
-    // Score number
-    ctx.fillStyle='#fff'; ctx.font='900 130px Montserrat,Arial,sans-serif';
+    ctx.fillStyle='#fff'; ctx.font='900 128px Montserrat,Arial,sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText(score, W/2-22, circY+10);
     ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.font='700 44px Montserrat,Arial,sans-serif';
-    ctx.fillText('/10', W/2+80, circY+22);
-    // Label
+    ctx.fillText('/10', W/2+78, circY+22);
+
+    // Score label below circle — 40px gap
+    const scoreLabelY=circY+circR+46;
     ctx.fillStyle='#fff'; ctx.font='800 34px Montserrat,Arial,sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(scoreLabel, W/2, circY+circR+48);
+    ctx.fillText(scoreLabel, W/2, scoreLabelY);
 
-    // Divider
-    const divY=circY+circR+94;
+    // Divider — 36px below score label
+    const divY=scoreLabelY+44;
     const divG=ctx.createLinearGradient(PAD,0,W-PAD,0);
-    divG.addColorStop(0,'transparent'); divG.addColorStop(0.3,'rgba(255,3,255,0.5)'); divG.addColorStop(0.7,'rgba(120,0,255,0.5)'); divG.addColorStop(1,'transparent');
+    divG.addColorStop(0,'transparent'); divG.addColorStop(0.3,'rgba(255,3,255,0.5)');
+    divG.addColorStop(0.7,'rgba(120,0,255,0.5)'); divG.addColorStop(1,'transparent');
     ctx.fillStyle=divG; ctx.fillRect(PAD,divY,W-PAD*2,2);
 
-    // Two columns
-    const colGap=20, colW=(W-PAD*2-colGap)/2;
+    // Column headers — 36px below divider
+    const colHeaderY=divY+38;
+    const colGap=18, colW=(W-PAD*2-colGap)/2;
     const col1X=PAD, col2X=PAD+colW+colGap;
-    const colHeaderY=divY+44;
-    const maxRows=Math.max(correct.length, missed.length, 1);
-    const rowH=Math.min(100, Math.floor((H-260-colHeaderY-44)/maxRows));
-    const fR=Math.round(rowH*0.28);
-    const fontSize=Math.min(26, Math.max(18, Math.round(rowH*0.27)));
-
-    ctx.font='800 26px Montserrat,Arial,sans-serif'; ctx.textBaseline='middle';
+    ctx.font='800 25px Montserrat,Arial,sans-serif'; ctx.textBaseline='middle';
     ctx.fillStyle='rgba(0,220,100,0.9)'; ctx.textAlign='left';
     ctx.fillText('✅ Got right ('+correct.length+')', col1X, colHeaderY);
     ctx.fillStyle='rgba(255,100,100,0.9)';
     ctx.fillText('❌ Missed ('+missed.length+')', col2X, colHeaderY);
 
+    // Rows — fill remaining space (H - botFree - colHeaderY - rowHeaderH)
     const listY=colHeaderY+34;
+    const listBottom=H-botFree;
+    const maxRows=Math.max(correct.length, missed.length, 1);
+    const rowH=Math.min(110, Math.max(60, Math.floor((listBottom-listY)/maxRows)));
+    const fR=Math.round(rowH*0.28);
+    const fontSize=Math.min(26, Math.max(16, Math.round(rowH*0.26)));
+
     for(let i=0;i<maxRows;i++){
       const ry=listY+i*rowH, rowCY=ry+rowH/2;
+
       if(i<correct.length){
         ctx.fillStyle='rgba(0,220,100,0.07)'; rr(ctx,col1X,ry,colW,rowH-6,10); ctx.fill();
         const cc=[...SEMI1,...SEMI2].find(c=>c.name===correct[i])?.cc;
@@ -736,6 +749,7 @@ function generateScoreCard() {
         ctx.textAlign='left'; ctx.textBaseline='middle';
         ctx.fillText(truncateText(ctx,correct[i],colW-fR*2-18),col1X+fR*2+14,rowCY);
       }
+
       if(i<missed.length){
         ctx.fillStyle='rgba(255,80,80,0.07)'; rr(ctx,col2X,ry,colW,rowH-6,10); ctx.fill();
         const cc2=[...SEMI1,...SEMI2].find(c=>c.name===missed[i])?.cc;
@@ -751,8 +765,8 @@ function generateScoreCard() {
         ctx.fillText(truncateText(ctx,missed[i],colW-fR*2-18),col2X+fR*2+14,rowCY);
       }
     }
-    ctx.restore();
 
+    ctx.restore();
     setTimeout(()=>{
       try{
         const dataUrl=document.getElementById('exportCanvas').toDataURL('image/png');
@@ -768,33 +782,6 @@ function generateScoreCard() {
   escImg.src='https://i.imgur.com/I0l4jby.png';
 }
 
-function buildList(countries, savedPicks=[]){
-  selected.clear();updateCount();
-  const list=document.getElementById('countriesList');
-  list.innerHTML='';
-  countries.forEach((c,i)=>{
-    const row=document.createElement('div');
-    row.className='country-row';row.id='row_'+i;
-    row.innerHTML=`
-      <div class="flag-box"><img src="${flagUrl(c.cc)}" alt="${c.name}" onerror="this.parentNode.style.background='rgba(255,3,255,0.2)'"></div>
-      <div class="cinfo">
-        <span class="cname">${c.name}</span>
-        <span class="cartist">${c.artist} · ${c.song}</span>
-      </div>
-      <div class="check-circle"><svg class="check-icon" viewBox="0 0 10 10" fill="none"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
-    // Restore saved selections
-    if(savedPicks.includes(c.name)){
-      selected.add(i);
-      row.classList.add('sel');
-    }
-    const submitted = localStorage.getItem('evf_submitted_sf'+currentSemi);
-    if(!submitted){
-      row.addEventListener('click',()=>toggle(i,row));
-    }
-    list.appendChild(row);
-  });
-  updateCount();
-}
 function toggle(i,row){
   if(selected.has(i)){selected.delete(i);row.classList.remove('sel');}
   else{
@@ -1317,6 +1304,14 @@ function openStats() {
     .catch(() => {
       document.getElementById('statsBody').innerHTML = '<div class="stats-loading">Could not load data.<br>Try again later.</div>';
     });
+}
+
+function goBack(){
+  const menu=document.getElementById('menuScreen');
+  const picker=document.getElementById('pickerScreen');
+  picker.classList.remove('active');
+  menu.classList.remove('slide-out');
+  menu.classList.add('active');
 }
 
 function openStatsFromMenu(n) {
