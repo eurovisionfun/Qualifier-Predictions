@@ -519,38 +519,59 @@ function openSemi(n){
     const submittedActions = document.getElementById('submittedActions');
     const hint = document.getElementById('saveHint');
 
+    // Always reset first to avoid stale HTML from previous semi
+    submittedActions.innerHTML = '';
+    submittedActions.style.display = 'none';
+    saveBtn.style.display = 'none';
+
     if (isRevealed && submitted) {
-      // Results are out + user submitted → show score
       showScoreReveal(savedPicks, state.qualifiers, true);
-      saveBtn.style.display='none';
-      // submittedActions handled inside showScoreReveal
     } else if (isRevealed && !submitted) {
-      // Results are out but user didn't submit → show closed message
       showLockedMessage(n, 'missed');
-      saveBtn.style.display='none';
-      submittedActions.style.display='none';
-      hint.textContent='';
     } else if (isLocked && !submitted) {
-      // Locked before results, no submission
       showLockedMessage(n, 'locked');
-      saveBtn.style.display='none';
-      submittedActions.style.display='none';
-      hint.textContent='';
     } else if (isLocked && submitted) {
-      // Locked but results not yet → show saved predictions + download button
-      saveBtn.style.display='none';
+      // Locked, no results yet — show predictions download only
       submittedActions.innerHTML=`
         <button class="save-btn" onclick="generateCard()">📷 Share My Predictions</button>
         <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
       submittedActions.style.display='flex';
       hint.textContent='Results coming soon — check back after the show!';
     } else if (submitted) {
-      saveBtn.style.display='none';
+      // Not locked, already submitted
+      submittedActions.innerHTML=`
+        <button class="save-btn" onclick="generateCard()">📷 Download My Predictions</button>
+        <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
       submittedActions.style.display='flex';
-      hint.textContent='Your predictions are saved ✅ — download again or see community stats';
+      hint.textContent='Your predictions are saved ✅';
+    } else {
+      // Not submitted, not locked — show save button
+      saveBtn.style.display='block';
+      hint.textContent='Story-ready image for Instagram, X & Facebook';
+    }
+  }).catch(() => {
+    // Fallback on network error — use time-based lock only
+    const saveBtn = document.getElementById('saveShareBtn');
+    const submittedActions = document.getElementById('submittedActions');
+    const hint = document.getElementById('saveHint');
+    const timeLocked = new Date() >= (n===1 ? SF1_TIME : SF2_TIME);
+    submittedActions.innerHTML = '';
+    if (timeLocked && submitted) {
+      submittedActions.innerHTML=`
+        <button class="save-btn" onclick="generateCard()">📷 Share My Predictions</button>
+        <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
+      submittedActions.style.display='flex';
+      hint.textContent='Results coming soon — check back after the show!';
+    } else if (submitted) {
+      submittedActions.innerHTML=`
+        <button class="save-btn" onclick="generateCard()">📷 Download My Predictions</button>
+        <button class="save-btn stats-btn-picker" onclick="openStats()">📊 Community Stats</button>`;
+      submittedActions.style.display='flex';
+      hint.textContent='Your predictions are saved ✅';
+    } else if (timeLocked) {
+      showLockedMessage(n, 'locked');
     } else {
       saveBtn.style.display='block';
-      submittedActions.style.display='none';
       hint.textContent='Story-ready image for Instagram, X & Facebook';
     }
   });
